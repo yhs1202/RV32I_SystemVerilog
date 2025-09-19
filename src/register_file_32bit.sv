@@ -13,8 +13,6 @@ module register_file_32bit (
 
     logic [31:0] mem [0:31];
 
-    // assign mem[0] = 32'b0;  // $0
-
     assign r_data_0 = mem[r_addr_0];
     assign r_data_1 = mem[r_addr_1];
 
@@ -24,4 +22,16 @@ module register_file_32bit (
         end
     end
 
+    initial begin
+        mem[0] = 32'd0;  // $0
+        mem[1] = 32'd1;  // $1
+        mem[2] = 32'd2;  // $2
+        mem[3] = 32'd3;  // $3
+        mem[4] = 32'd4;  // $4
+        mem[5] = 32'd5;  // $5
+        mem[6] = 32'd6;  // $6
+        mem[7] = 32'd7;  // $7
+        mem[8] = 32'd8;  // $8
+        mem[9] = 32'd9;  // $9
+    end
 endmodule
