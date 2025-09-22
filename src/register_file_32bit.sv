@@ -13,8 +13,9 @@ module register_file_32bit (
 
     logic [31:0] mem [0:31];
 
-    assign r_data_0 = mem[r_addr_0];
-    assign r_data_1 = mem[r_addr_1];
+    // Register $0 is hardwired to 0
+    assign r_data_0 = (!r_addr_0) ? mem[r_addr_0] : 32'b0;
+    assign r_data_1 = (!r_addr_1) ? mem[r_addr_1] : 32'b0;
 
     always_ff @( posedge clk ) begin : blockName
         if (w_en) begin
