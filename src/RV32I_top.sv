@@ -2,7 +2,7 @@
 module RV32I_top (
     input logic clk,
     input logic rst,
-    output logic N, Z, C, V
+    output logic [31:0] result
 );
     logic [31:0] PC;
     logic [31:0] instruction_code;
@@ -17,8 +17,7 @@ module RV32I_top (
         .rst(rst),
         .instruction_code(instruction_code),
 
-        .N(N), .Z(Z), .C(C), .V(V),
-        // .ALU_result(),  // Not used
+        .result(result),
         .PC(PC)
     );
 
