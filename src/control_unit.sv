@@ -31,13 +31,13 @@ module control_unit (
     end
 
     always_comb begin : ALU_decoder
-        unique case (ALUOp)
+        case (ALUOp)
             3'b000: begin // Load/Store
             end
             3'b001: begin // Branch
             end
             3'b010: begin // R-type
-                unique case ({func7, func3})
+                case ({func7, func3})
                     10'b0000000_000: ALUControl = 4'b0000; // ADD
                     10'b0100000_000: ALUControl = 4'b0001; // SUB
                     10'b0000000_100: ALUControl = 4'b0010; // XOR
@@ -48,7 +48,7 @@ module control_unit (
                     10'b0100000_101: ALUControl = 4'b0111; // SRA
                     10'b0000000_010: ALUControl = 4'b1000; // SLT
                     10'b0000000_011: ALUControl = 4'b1001; // SLTU
-                    default: ALUControl = 4'bxxxx; // Default to ADD
+                    default: ALUControl = 4'bx; // Default to ADD
                 endcase
                 Reg_write = 1'b1;
             end
@@ -68,7 +68,7 @@ module control_unit (
             end
             */
             default: begin // NOP/illegal
-                ALUControl = 4'bxxxx;
+                ALUControl = 4'bx;
                 Reg_write = 1'b0;
             end
         endcase

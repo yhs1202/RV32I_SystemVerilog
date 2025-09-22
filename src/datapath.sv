@@ -5,11 +5,12 @@ module datapath (
     input logic rst,
     input logic [31:0] instruction_code,
     input logic [2:0] ALUOp,
+    input logic [3:0] ALUControl,
     input logic Reg_write,
 
     output logic [31:0] PC,
+    output logic N, Z, C, V,
     output logic [31:0] ALU_result
-
 
 );
     logic [31:0] r_data_0, r_data_1;
@@ -39,10 +40,11 @@ module datapath (
         .a(r_data_0),
         .b(r_data_1),
         .ALUOp(ALUOp),
-        .N(),
-        .Z(),
-        .C(),
-        .V(),
+        .ALUControl(ALUControl),
+        .N(N),
+        .Z(Z),
+        .C(C),
+        .V(V),
         .result(ALU_result)
     );
 
