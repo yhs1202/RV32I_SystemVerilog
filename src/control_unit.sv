@@ -4,8 +4,6 @@
 `include "define.sv"
 
 module control_unit (
-    input logic clk,
-    input logic rst,
     input logic [31:0] instruction_code,
 
     // control signals
@@ -78,6 +76,17 @@ module control_unit (
             RegWrite = 1'b0;
         default: 
             RegWrite = 1'b0; // Default to no write
+        endcase
+    end
+
+    // ALUSrc (0-> rs2, 1-> imm)
+    always_comb begin : ALUSrc_decoder
+        case (opcode)
+        `OP_R, `OP_B: 
+            ALUSrc = 1'b0; // Use rs2
+        default: 
+        // `OP_I_ARITH, `OP_I_LOAD, `OP_I_JALR, `OP_S, `OP_U_LUI, `OP_U_AUIPC, `OP_J_JAL: 
+            ALUSrc = 1'b1; // Use immediate -> decoded in extend.sv
         endcase
     end
 endmodule

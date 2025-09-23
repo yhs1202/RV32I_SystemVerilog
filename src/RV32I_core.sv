@@ -14,8 +14,6 @@ module RV32I_core (
     logic [4:0] ALUControl;   
 
     control_unit U_CONTROL_UNIT (
-        .clk(clk),
-        .rst(rst),
         .instruction_code(instruction_code),
 
         .ALUSrc(ALUSrc),
