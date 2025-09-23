@@ -13,9 +13,6 @@ module register_file_32bit (
 
     logic [31:0] mem [0:31];
 
-    // Register $0 is hardwired to 0
-    assign r_data_0 = (!r_addr_0) ? mem[r_addr_0] : 32'b0;
-    assign r_data_1 = (!r_addr_1) ? mem[r_addr_1] : 32'b0;
 
     always_ff @( posedge clk ) begin : blockName
         if (w_en) begin
@@ -23,16 +20,15 @@ module register_file_32bit (
         end
     end
 
+    always_comb begin
+        r_data_0 = (r_addr_0 != 0) ? mem[r_addr_0] : 32'b0;
+        r_data_1 = (r_addr_1 != 0) ? mem[r_addr_1] : 32'b0;
+    end
+
+    // Initialize registers for simulation
     initial begin
-        mem[0] = 32'd0;  // $0
-        mem[1] = 32'd1;  // $1
-        mem[2] = 32'd2;  // $2
-        mem[3] = 32'd3;  // $3
-        mem[4] = 32'd4;  // $4
-        mem[5] = 32'd5;  // $5
-        mem[6] = 32'd6;  // $6
-        mem[7] = 32'd7;  // $7
-        mem[8] = 32'd8;  // $8
-        mem[9] = 32'd9;  // $9
+        for (int i = 0; i < 32; i++) begin
+            mem[i] = i + 32'd30;
+        end
     end
 endmodule

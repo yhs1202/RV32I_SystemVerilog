@@ -1,8 +1,7 @@
 `timescale 1ns/1ps
 module RV32I_top (
     input logic clk,
-    input logic rst,
-    output logic [31:0] result
+    input logic rst
 );
     logic [31:0] PC;
     logic [31:0] instruction_code;
@@ -17,7 +16,6 @@ module RV32I_top (
         .rst(rst),
         .instruction_code(instruction_code),
 
-        .result(result),
         .PC(PC)
     );
 

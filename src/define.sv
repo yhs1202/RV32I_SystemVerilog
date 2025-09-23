@@ -23,3 +23,11 @@
 `define OP_U_LUI	7'b011_0111     // U-type LUI
 `define OP_U_AUIPC	7'b001_0111     // U-type AUIPC
 `define OP_J_JAL	7'b110_1111     // J-type JAL
+
+
+/* Define funct3 codes for memory */
+`define F3_BYTE  3'b000
+`define F3_HALF  3'b001
+`define F3_WORD  3'b010
+`define F3_UBYTE 3'b100
+`define F3_UHALF 3'b101

@@ -12,6 +12,7 @@ module control_unit (
     output logic RegWrite,
     output logic MemRead,
     output logic MemWrite,
+    output logic [2:0] MemUnit,     // 0-> byte, 1-> halfword, 2-> word, 4-> byte unsigned, 5-> halfword unsigned
     output logic Branch,            // 0-> no branch, 1-> branch
     output logic [4:0] ALUControl
 
@@ -41,7 +42,7 @@ module control_unit (
         end
 
         `OP_I_ARITH: begin // I-type arithmetic
-            casez ({func7, func3})  // ? -> don't care, z -> high impedance, casez -> 
+            casez ({func7, func3})  // casez: x, z -> don't care
                 10'b???????_000: ALUControl = `ALU_ADD; // ADDI
                 10'b???????_100: ALUControl = `ALU_XOR; // XORI
                 10'b???????_110: ALUControl = `ALU_OR;  // ORI
@@ -87,6 +88,41 @@ module control_unit (
         default: 
         // `OP_I_ARITH, `OP_I_LOAD, `OP_I_JALR, `OP_S, `OP_U_LUI, `OP_U_AUIPC, `OP_J_JAL: 
             ALUSrc = 1'b1; // Use immediate -> decoded in extend.sv
+        endcase
+    end
+
+    // MemWrite
+    always_comb begin : MemWrite_decoder
+        unique case (opcode)
+        `OP_S: begin
+            MemWrite = 1'b1; // Store to memory
+            MemUnit = func3;
+        end
+        default: 
+            MemWrite = 1'b0; // Default to no write
+        endcase
+    end
+
+    // MemRead
+    always_comb begin : MemRead_decoder
+        unique case (opcode)
+        `OP_I_LOAD: begin 
+            MemRead = 1'b1; // Load from memory
+            MemUnit = func3;
+        end
+        default: 
+            MemRead = 1'b0; // Default to no read
+        endcase
+    end
+
+
+    // MemtoReg (0-> ALU result, 1-> memory data)
+    always_comb begin : MemtoReg_decoder
+        case (opcode)
+        `OP_I_LOAD: 
+            MemtoReg = 1'b1; // Load from memory
+        default: 
+            MemtoReg = 1'b0; // Default to ALU result
         endcase
     end
 endmodule

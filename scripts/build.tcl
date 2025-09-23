@@ -14,7 +14,7 @@ if {[info exists ::env(TOP)]} {
     set top $::env(TOP)
 } else {
     # Top-level module name (edit this)
-    set top "top"                    ;# Top-level module name (edit this)
+    set top "RV32I_top"                    ;# Top-level module name (edit this)
 }
 set tb_top "tb_$top"                 ;# Testbench top module name (edit this)
 set part "xc7a35ticsg324-1L"         ;# Device part (example: Basys-3)

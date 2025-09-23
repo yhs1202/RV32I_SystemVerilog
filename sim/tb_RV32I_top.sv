@@ -11,7 +11,7 @@ module tb_RV32I_top();
     always #5 clk = ~clk;
     initial begin
         #0; clk = 1'b0; rst = 1'b1;
-        #20; rst = 1'b0;
-        #500; $stop;
+        #10; rst = 1'b0;
+        #200; $stop;
     end
 endmodule

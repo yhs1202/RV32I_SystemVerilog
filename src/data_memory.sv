@@ -1,22 +1,49 @@
 `timescale 1ns/1ps
+`include "define.sv"
+
+// Temporary implementation of data memory
+// TODO: Replace with dual-port RAM 
 module data_memory (
     input logic clk,
     input logic MemRead,
     input logic MemWrite,
+    input logic [2:0] MemUnit, // 0-> byte, 1-> halfword, 2-> word, 4-> byte unsigned, 5-> halfword unsigned
     input logic [31:0] addr,
     input logic [31:0] w_data,
     output logic [31:0] r_data
 );
 
-    logic [31:0] mem [0:15]; // 16 words of memory
+    (* ram_style = "block" *) logic [7:0] mem [0:31]; // 256 "bytes" of memory
 
-    // Read operation
-    assign r_data = (MemRead) ? mem[addr[9:2]] : 32'b0; // Word-aligned access
+    initial begin
+        for (int i = 0; i < 32; i++) begin
+            mem[i] = i + 8'd20; // Initialize 
+        end
+    end
 
-    // Write operation
-    always_ff @(posedge clk) begin
+
+    // Write operation (Store)
+    always_ff @(posedge clk) begin : MemoryAccess
         if (MemWrite) begin
-            mem[addr[9:2]] <= w_data; // Word-aligned access
+            case (MemUnit)
+                `F3_BYTE: mem[addr] <= w_data[7:0]; // Store byte
+                `F3_HALF: {mem[addr+1], mem[addr]} <= w_data[15:0]; // Store halfword
+                `F3_WORD: {mem[addr+3], mem[addr+2], mem[addr+1], mem[addr]} <= w_data; // Store word
+                default: mem[addr] <= 8'bx; // Invalid operation
+            endcase
+        end
+    end
+    always_ff @(posedge clk) begin : MemoryRead
+        r_data = 32'b0; // Default value
+        if (MemRead) begin
+            case (MemUnit)
+               `F3_BYTE: r_data <= {{24{mem[addr][7]}}, mem[addr]};    // sign(msb)-extend
+               `F3_HALF: r_data <= {{16{mem[addr][7]}}, mem[addr+1], mem[addr]};
+               `F3_WORD: r_data <= {mem[addr+3], mem[addr+2], mem[addr+1], mem[addr]};
+               `F3_UBYTE: r_data <= {24'b0, mem[addr]};
+               `F3_UHALF: r_data <= {16'b0, mem[addr+1], mem[addr]};
+                default: r_data <= 32'bx; // Invalid operation
+            endcase
         end
     end
 endmodule
