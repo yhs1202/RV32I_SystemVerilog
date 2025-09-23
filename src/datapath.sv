@@ -11,7 +11,7 @@ module datapath (
     input logic RegWrite,
     input logic MemRead,
     input logic MemWrite,
-    input logic [2:0] MemUnit,     // 0-> byte, 1-> halfword, 2-> word, 3-> byte unsigned, 4-> halfword unsigned
+    input logic [2:0] func3,
     input logic Branch,            // 0-> no branch, 1-> branch
     // input logic [2:0] ALUOp,
     input logic [4:0] ALUControl,
@@ -79,11 +79,12 @@ module datapath (
 
     data_memory U_DATA_MEMORY (
         .clk(clk),
-        .addr(ALU_result),
-        .w_data(r_data_1),
         .MemRead(MemRead),
         .MemWrite(MemWrite),
-        .MemUnit(MemUnit),
+        .func3(func3),  // 0-> b, 1-> h, 2-> w, 4-> ub, 5-> uh
+        .addr(ALU_result),
+        .w_data(r_data_1),
+
         .r_data(mem_r_data)
     );
 

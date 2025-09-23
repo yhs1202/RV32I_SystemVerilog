@@ -12,7 +12,6 @@ module control_unit (
     output logic RegWrite,
     output logic MemRead,
     output logic MemWrite,
-    output logic [2:0] MemUnit,     // 0-> byte, 1-> halfword, 2-> word, 4-> byte unsigned, 5-> halfword unsigned
     output logic Branch,            // 0-> no branch, 1-> branch
     output logic [4:0] ALUControl
 
@@ -64,6 +63,7 @@ module control_unit (
         `OP_B: ALUControl = `ALU_SUB; // Use SUB for branch comparisons
 
         `OP_J_JAL: ALUControl = `ALU_NOP; // JAL does not require ALU operation (PC is handled in datapath)
+        default: ALUControl = `ALU_NOP;
 
         endcase
     end
@@ -96,7 +96,6 @@ module control_unit (
         unique case (opcode)
         `OP_S: begin
             MemWrite = 1'b1; // Store to memory
-            MemUnit = func3;
         end
         default: 
             MemWrite = 1'b0; // Default to no write
@@ -108,7 +107,6 @@ module control_unit (
         unique case (opcode)
         `OP_I_LOAD: begin 
             MemRead = 1'b1; // Load from memory
-            MemUnit = func3;
         end
         default: 
             MemRead = 1'b0; // Default to no read

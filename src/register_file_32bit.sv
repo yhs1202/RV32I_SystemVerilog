@@ -28,7 +28,7 @@ module register_file_32bit (
     // Initialize registers for simulation
     initial begin
         for (int i = 0; i < 32; i++) begin
-            mem[i] = i + 32'd30;
+            mem[i] = i + 32'd50;
         end
     end
 endmodule

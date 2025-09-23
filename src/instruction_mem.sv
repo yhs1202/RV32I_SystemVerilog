@@ -39,12 +39,12 @@ module instruction_mem (
 
         /* S-type instructions */
         if (1) begin
-            // sb x14, 4(x0)
-            mem[0] = 32'h00E0_0223;
-            // sh x23, 8(x0)
-            mem[1] = 32'h0170_1423;
-            // sw x24, 12(x0)
-            mem[2] = 32'h0180_2623;
+            // // sb x14, 4(x0)
+            // mem[0] = 32'h00E0_0223;
+            // // sh x23, 8(x0)
+            // mem[1] = 32'h0170_1423;
+            // // sw x24, 12(x0)
+            // mem[2] = 32'h0180_2623;
 
             /* I-type load instructions */
             // lb x14, 4(x0)
@@ -53,6 +53,8 @@ module instruction_mem (
             mem[4] = 32'h0080_1B83;
             // lw x5, 12(x2)
             mem[5] = 32'h00C1_2283;
+            // lw x5, 12(x0)
+            mem[6] = 32'h00C0_2283;
         end
 
 

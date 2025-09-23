@@ -13,7 +13,6 @@ module RV32I_core (
     logic RegWrite;
     logic MemRead;
     logic MemWrite;
-    logic [2:0] MemUnit;     // see define.sv
     logic Branch;            // 0-> no branch, 1-> branch
     logic [4:0] ALUControl;  // see define.sv
 
@@ -28,7 +27,6 @@ module RV32I_core (
         .RegWrite(RegWrite),
         .MemRead(MemRead),
         .MemWrite(MemWrite),
-        .MemUnit(MemUnit),
         .Branch(Branch),
         // .ALUOp(ALUOp),
         .ALUControl(ALUControl)
@@ -43,7 +41,7 @@ module RV32I_core (
         .RegWrite(RegWrite),
         .MemRead(MemRead),
         .MemWrite(MemWrite),
-        .MemUnit(MemUnit),
+        .func3(instruction_code[14:12]),
         .Branch(Branch),
         // .ALUOp(ALUOp),
         .ALUControl(ALUControl),
