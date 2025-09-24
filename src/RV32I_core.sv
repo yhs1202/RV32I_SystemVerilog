@@ -2,8 +2,8 @@
 module RV32I_core (
     input logic clk,
     input logic rst,
-    
     input logic [31:0] instruction_code,
+    
     output logic [31:0] PC
 );
 
@@ -41,12 +41,8 @@ module RV32I_core (
         .rst(rst),
         .instruction_code(instruction_code),
         .ALUSrc(ALUSrc),
-        // .MemtoReg(MemtoReg),
         .RegWrite(RegWrite),
         .REG_w_data(mem2reg_mux_out),
-        // .MemRead(MemRead),
-        // .MemWrite(MemWrite),
-        // .func3(instruction_code[14:12]),
         .Branch(Branch),
         // .ALUOp(ALUOp),
         .ALUControl(ALUControl),

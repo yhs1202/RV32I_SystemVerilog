@@ -7,12 +7,8 @@ module datapath (
 
     // control signals
     input logic ALUSrc,            // 0-> rs2, 1-> imm
-    // input logic MemtoReg,          // 0-> ALU result, 1-> memory data
     input logic RegWrite,
-    input logic REG_w_data,
-    // input logic MemRead,
-    // input logic MemWrite,
-    // input logic [2:0] func3,
+    input logic [31:0] REG_w_data,
     input logic Branch,            // 0-> no branch, 1-> branch
     // input logic [2:0] ALUOp,
     input logic [4:0] ALUControl,
@@ -27,6 +23,7 @@ module datapath (
     logic [31:0] r_data_0, r_data_1;
     logic [31:0] alu_b;
     logic [31:0] imm_ext;
+    logic [31:0] mem2reg_mux_out;
 
     assign MEM_w_data = r_data_1;
 
@@ -46,7 +43,8 @@ module datapath (
         .r_addr_0(instruction_code[19:15]),
         .w_en(RegWrite),
         .w_addr(instruction_code[11:7]),
-        .w_data(mem2reg_mux_out),
+        .w_data(REG_w_data),
+
         .r_data_1(r_data_1),
         .r_data_0(r_data_0)
     );
@@ -77,10 +75,5 @@ module datapath (
         .in('{r_data_1, imm_ext}),
         .out(alu_b)
     );
-
-
-
-
-
 
 endmodule

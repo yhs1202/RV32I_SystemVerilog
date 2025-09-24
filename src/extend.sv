@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-`include "define.sv"
+`include "define.svh"
 
 module extend (
     input logic [31:0] instruction_code,
@@ -7,11 +7,20 @@ module extend (
 );
 
     wire [6:0] opcode = instruction_code[6:0];
+    wire [2:0] func3 = instruction_code[14:12];
 
     always_comb begin
         case (opcode)
-            `OP_I_LOAD, `OP_I_ARITH, `OP_I_JALR: begin // I-type (000)
+            `OP_I_LOAD, `OP_I_JALR: begin // I-type (000)
                 imm_ext = {{20{instruction_code[31]}}, instruction_code[31:20]};
+            end
+            `OP_I_ARITH: begin
+                case (func3)
+                    3'b001, 3'b101: begin // SLLI, SRLI, SRAI
+                        imm_ext = {27'b0, instruction_code[24:20]}; // zero-extend for shift amount
+                    end 
+                    default: imm_ext = {{20{instruction_code[31]}}, instruction_code[31:20]}; // sign-extend for other I-type
+                endcase
             end
             `OP_S: begin // S-type (001)
                 imm_ext = {{20{instruction_code[31]}}, instruction_code[31:25], instruction_code[11:7]};
