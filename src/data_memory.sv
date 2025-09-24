@@ -14,10 +14,10 @@ module data_memory (
     output logic [31:0] r_data
 );
 
-    (* ram_style = "block" *) logic [7:0] mem [0:31]; // 256 "bytes" of memory
+    (* ram_style = "block" *) logic [7:0] mem [0:255]; // 256 "bytes" of memory
 
     initial begin
-        for (int i = 0; i < 32; i++) begin
+        for (int i = 0; i < 256; i++) begin
             mem[i] = i + 8'd20; // Initialize 
         end
     end

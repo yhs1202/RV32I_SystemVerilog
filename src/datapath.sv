@@ -7,26 +7,28 @@ module datapath (
 
     // control signals
     input logic ALUSrc,            // 0-> rs2, 1-> imm
-    input logic MemtoReg,          // 0-> ALU result, 1-> memory data
+    // input logic MemtoReg,          // 0-> ALU result, 1-> memory data
     input logic RegWrite,
-    input logic MemRead,
-    input logic MemWrite,
-    input logic [2:0] func3,
+    input logic REG_w_data,
+    // input logic MemRead,
+    // input logic MemWrite,
+    // input logic [2:0] func3,
     input logic Branch,            // 0-> no branch, 1-> branch
     // input logic [2:0] ALUOp,
     input logic [4:0] ALUControl,
 
+    output logic [31:0] ALU_result,  // mem_addr
+    output logic [31:0] MEM_w_data,  // mem_w_data
     output logic [31:0] PC
 
 );
     logic N, Z, C, V;
 
-    logic [31:0] ALU_result;
-
     logic [31:0] r_data_0, r_data_1;
     logic [31:0] alu_b;
-    logic [31:0] mem_r_data, mem2reg_mux_out;
     logic [31:0] imm_ext;
+
+    assign MEM_w_data = r_data_1;
 
     register_nbit #(
         .WIDTH(32)
@@ -77,25 +79,8 @@ module datapath (
     );
 
 
-    data_memory U_DATA_MEMORY (
-        .clk(clk),
-        .MemRead(MemRead),
-        .MemWrite(MemWrite),
-        .func3(func3),  // 0-> b, 1-> h, 2-> w, 4-> ub, 5-> uh
-        .addr(ALU_result),
-        .w_data(r_data_1),
 
-        .r_data(mem_r_data)
-    );
 
-    mux_n #(
-        .N(2),
-        .WIDTH(32)
-    ) U_MUX_MEM_TO_REG (
-        .sel(MemtoReg),
-        .in('{ALU_result, mem_r_data}),
-        .out(mem2reg_mux_out)
-    );
 
 
 endmodule

@@ -11,10 +11,14 @@ module RV32I_core (
     logic ALUSrc;            // 0-> rs2, 1-> imm
     logic MemtoReg;          // 0-> ALU result, 1-> memory data
     logic RegWrite;
-    logic MemRead;
-    logic MemWrite;
     logic Branch;            // 0-> no branch, 1-> branch
     logic [4:0] ALUControl;  // see define.sv
+    logic [31:0] ALU_result;
+    logic MemRead;
+    logic MemWrite;
+    logic [31:0] MEM_w_data;
+    logic [31:0] MEM_r_data;
+    logic [31:0] mem2reg_mux_out;
 
 
     // logic [2:0] ALUOp;
@@ -37,16 +41,39 @@ module RV32I_core (
         .rst(rst),
         .instruction_code(instruction_code),
         .ALUSrc(ALUSrc),
-        .MemtoReg(MemtoReg),
+        // .MemtoReg(MemtoReg),
         .RegWrite(RegWrite),
-        .MemRead(MemRead),
-        .MemWrite(MemWrite),
-        .func3(instruction_code[14:12]),
+        .REG_w_data(mem2reg_mux_out),
+        // .MemRead(MemRead),
+        // .MemWrite(MemWrite),
+        // .func3(instruction_code[14:12]),
         .Branch(Branch),
         // .ALUOp(ALUOp),
         .ALUControl(ALUControl),
 
+        .ALU_result(ALU_result),
+        .MEM_w_data(MEM_w_data),
         .PC(PC)
+    );
+
+    mux_n #(
+        .N(2),
+        .WIDTH(32)
+    ) U_MUX_MEM_TO_REG (
+        .sel(MemtoReg),
+        .in('{ALU_result, MEM_r_data}),
+        .out(mem2reg_mux_out)
+    );
+
+    data_memory U_DATA_MEMORY (
+        .clk(clk),
+        .MemRead(MemRead),
+        .MemWrite(MemWrite),
+        .func3(instruction_code[14:12]),  // 0-> b, 1-> h, 2-> w, 4-> ub, 5-> uh
+        .addr(ALU_result),
+        .w_data(MEM_w_data),
+
+        .r_data(MEM_r_data)
     );
 
 endmodule
