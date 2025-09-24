@@ -50,51 +50,44 @@ module instruction_mem (
         /* I-type arithmetic instructions */
         if (0) begin
             // addi rd(x5), rs1(x3), imm(4)
-            mem[1] = ADDI(5'd5, 5'd3, 12'd4);
+            mem[0] = ADDI(5'd5, 5'd3, 12'd4);
             // xori rd(x6), rs1(x3), imm(5)
-            mem[2] = XORI(5'd6, 5'd3, 12'd5);
+            mem[1] = XORI(5'd6, 5'd3, 12'd5);
             // ori rd(x7), rs1(x3), imm(6)
-            mem[3] = ORI(5'd7, 5'd3, 12'd6);
+            mem[2] = ORI(5'd7, 5'd3, 12'd6);
             // andi rd(x8), rs1(x3), imm(7)
-            mem[4] = ANDI(5'd8, 5'd3, 12'd7);
+            mem[3] = ANDI(5'd8, 5'd3, 12'd7);
             // slli rd(x9), rs1(x3), shamt(1)
-            mem[5] = SLLI(5'd9, 5'd3, 5'd1);
+            mem[4] = SLLI(5'd9, 5'd3, 5'd1);
             // srli rd(x10), rs1(x3), shamt(2)
-            mem[6] = SRLI(5'd10, 5'd3, 5'd2);
+            mem[5] = SRLI(5'd10, 5'd3, 5'd2);
             // srai rd(x11), rs1(x3), shamt(3)
-            mem[7] = SRAI(5'd11, 5'd3, 5'd3);
+            mem[6] = SRAI(5'd11, 5'd3, 5'd3);
             // slti rd(x12), rs1(x3), imm(8)
-            mem[8] = SLTI(5'd12, 5'd3, 12'd8);
+            mem[7] = SLTI(5'd12, 5'd3, 12'd8);
             // sltiu rd(x13), rs1(x3), imm(9)
-            mem[9] = SLTIU(5'd13, 5'd3, 12'd9);
+            mem[8] = SLTIU(5'd13, 5'd3, 12'd9);
         end
 
 
         if (1) begin
             /* S-type instructions */
             // sb x14, 4(x0)
-            // mem[0] = 32'h00E0_0223;
             mem[0] = SB(5'd14, 5'd0, 12'd4);
             // sh x23, 8(x0)
-            // mem[1] = 32'h0170_1423;
             mem[1] = SH(5'd23, 5'd0, 12'd8);
             // sw x24, 12(x0)
-            // mem[2] = 32'h0180_2623;
             mem[2] = SW(5'd24, 5'd0, 12'd12);
 
             /* I-type load instructions */
             // lb x14, 4(x0)
-            // mem[3] = 32'h0040_0703;
             mem[3] = LB(5'd14, 5'd0, 12'd4);
             // lh x23, 8(x0)
-            // mem[4] = 32'h0080_1B83;
             mem[4] = LH(5'd23, 5'd0, 12'd8);
-            // lw x5, 12(x2)
-            // mem[5] = 32'h00C1_2283;
-            mem[5] = LW(5'd5, 5'd2, 12'd12);
-            // lw x5, 12(x0)
-            // mem[6] = 32'h00C0_2283;
-            mem[6] = LW(5'd5, 5'd0, 12'd12);
+            // lw x24, 12(x0)
+            mem[5] = LW(5'd24, 5'd0, 12'd12);
+            // lw x24, 12(x2)
+            mem[6] = LW(5'd24, 5'd2, 12'd12);
         end
 
         /* B-type instructions */
