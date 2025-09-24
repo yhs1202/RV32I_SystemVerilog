@@ -1,60 +1,168 @@
 `include "define.svh"
 
 // RV32I Instruction Macros
-// Use: `INSTRUCTION_MACRO_NAME( rd,  rs1,  rs2 / imm /  shamt)
+// Use: `INSTRUCTION_MACRO_NAME([4:0] rd, [4:0] rs1, [4:0] rs2 / [11(I_a)/11(I_l)/12(S)/19(B)/20():0]imm / [4:0] shamt)
 
-// ---------- R-type ----------
-`define ADD(rd, rs1, rs2)   {7'b0000000, rs2, rs1, 3'b000, rd, `OP_R}
-`define SUB(rd, rs1, rs2)   {7'b0100000, rs2, rs1, 3'b000, rd, `OP_R}
-`define XOR(rd, rs1, rs2)   {7'b0000000, rs2, rs1, 3'b100, rd, `OP_R}
-`define OR(rd,  rs1, rs2)   {7'b0000000, rs2, rs1, 3'b110, rd, `OP_R}
-`define AND(rd, rs1, rs2)   {7'b0000000, rs2, rs1, 3'b111, rd, `OP_R}
-`define SLL(rd, rs1, rs2)   {7'b0000000, rs2, rs1, 3'b001, rd, `OP_R}
-`define SRL(rd, rs1, rs2)   {7'b0000000, rs2, rs1, 3'b101, rd, `OP_R}
-`define SRA(rd, rs1, rs2)   {7'b0100000, rs2, rs1, 3'b101, rd, `OP_R}
-`define SLT(rd, rs1, rs2)   {7'b0000000, rs2, rs1, 3'b010, rd, `OP_R}
-`define SLTU(rd, rs1, rs2)  {7'b0000000, rs2, rs1, 3'b011, rd, `OP_R}
+    // ---------- R-type ----------
+    function automatic [31:0] ADD (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
+        return {7'b0000000, rs2, rs1, 3'b000, rd, `OP_R};
+    endfunction
 
-// ---------- I-type (arith) ----------
-`define ADDI(rd, rs1, imm)  {imm, rs1, 3'b000, rd, `OP_I_ARITH}
-`define XORI(rd, rs1, imm)  {imm, rs1, 3'b100, rd, `OP_I_ARITH}
-`define ORI(rd,  rs1, imm)  {imm, rs1, 3'b110, rd, `OP_I_ARITH}
-`define ANDI(rd, rs1, imm)  {imm, rs1, 3'b111, rd, `OP_I_ARITH}
-`define SLLI(rd, rs1, shamt) {7'b0000000, shamt, rs1, 3'b001, rd, `OP_I_ARITH}
-`define SRLI(rd, rs1, shamt) {7'b0000000, shamt, rs1, 3'b101, rd, `OP_I_ARITH}
-`define SRAI(rd, rs1, shamt) {7'b0100000, shamt, rs1, 3'b101, rd, `OP_I_ARITH}
-`define SLTI(rd, rs1, imm)   {imm, rs1, 3'b010, rd, `OP_I_ARITH}
-`define SLTIU(rd, rs1, imm)  {imm, rs1, 3'b011, rd, `OP_I_ARITH}
+    function automatic [31:0] SUB (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
+        return {7'b0100000, rs2, rs1, 3'b000, rd, `OP_R};
+    endfunction
 
-// ---------- I-type (load) ----------
-`define LB(rd, rs1, imm)   {imm, rs1, 3'b000, rd, `OP_I_LOAD}
-`define LH(rd, rs1, imm)   {imm, rs1, 3'b001, rd, `OP_I_LOAD}
-`define LW(rd, rs1, imm)   {imm, rs1, 3'b010, rd, `OP_I_LOAD}
-`define LBU(rd, rs1, imm)  {imm, rs1, 3'b100, rd, `OP_I_LOAD}
-`define LHU(rd, rs1, imm)  {imm, rs1, 3'b101, rd, `OP_I_LOAD}
+    function automatic [31:0] XOR (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
+        return {7'b0000000, rs2, rs1, 3'b100, rd, `OP_R};
+    endfunction
 
-// ---------- S-type (store) ----------
-`define SB(rs2, rs1, imm)  {imm, rs2, rs1, 3'b000, imm, `OP_S}
-`define SH(rs2, rs1, imm)  {imm, rs2, rs1, 3'b001, imm, `OP_S}
-`define SW(rs2, rs1, imm)  {imm, rs2, rs1, 3'b010, imm, `OP_S}
+    function automatic [31:0] OR  (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
+        return {7'b0000000, rs2, rs1, 3'b110, rd, `OP_R};
+    endfunction
 
-// ---------- B-type (branch) ----------
-`define BEQ(rs1, rs2, imm)  {imm, imm, rs2, rs1, 3'b000, imm, imm, `OP_B}
-`define BNE(rs1, rs2, imm)  {imm, imm, rs2, rs1, 3'b001, imm, imm, `OP_B}
-`define BLT(rs1, rs2, imm)  {imm, imm, rs2, rs1, 3'b100, imm, imm, `OP_B}
-`define BGE(rs1, rs2, imm)  {imm, imm, rs2, rs1, 3'b101, imm, imm, `OP_B}
-`define BLTU(rs1, rs2, imm) {imm, imm, rs2, rs1, 3'b110, imm, imm, `OP_B}
-`define BGEU(rs1, rs2, imm) {imm, imm, rs2, rs1, 3'b111, imm, imm, `OP_B}
+    function automatic [31:0] AND (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
+        return {7'b0000000, rs2, rs1, 3'b111, rd, `OP_R};
+    endfunction
 
-// ---------- U-type ----------
-`define LUI(rd, imm)    {imm, rd, `OP_U_LUI}
-`define AUIPC(rd, imm)  {imm, rd, `OP_U_AUIPC}
+    function automatic [31:0] SLL (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
+        return {7'b0000000, rs2, rs1, 3'b001, rd, `OP_R};
+    endfunction
 
-// ---------- J-type ----------
-`define JAL(rd, imm)    {imm, imm, imm, imm, rd, `OP_J_JAL}
-`define JALR(rd, rs1, imm) {imm, rs1, 3'b000, rd, `OP_I_JALR}
+    function automatic [31:0] SRL (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
+        return {7'b0000000, rs2, rs1, 3'b101, rd, `OP_R};
+    endfunction
 
-// ---------- SYSTEM ----------
-`define ECALL   {12'h000, 5'd0, 3'b000, 5'd0, 7'b1110011}
-`define EBREAK  {12'h001, 5'd0, 3'b000, 5'd0, 7'b1110011}
+    function automatic [31:0] SRA (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
+        return {7'b0100000, rs2, rs1, 3'b101, rd, `OP_R};
+    endfunction
 
+    function automatic [31:0] SLT (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
+        return {7'b0000000, rs2, rs1, 3'b010, rd, `OP_R};
+    endfunction
+
+    function automatic [31:0] SLTU (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
+        return {7'b0000000, rs2, rs1, 3'b011, rd, `OP_R};
+    endfunction
+
+    // ---------- I-type (arith) ----------
+    function automatic [31:0] ADDI (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b000, rd, `OP_I_ARITH};
+    endfunction
+
+    function automatic [31:0] XORI (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b100, rd, `OP_I_ARITH};
+    endfunction
+
+    function automatic [31:0] ORI  (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b110, rd, `OP_I_ARITH};
+    endfunction
+
+    function automatic [31:0] ANDI (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b111, rd, `OP_I_ARITH};
+    endfunction
+
+    function automatic [31:0] SLLI (input [4:0] rd, input [4:0] rs1, input [4:0] shamt);
+        return {7'b0000000, shamt, rs1, 3'b001, rd, `OP_I_ARITH};
+    endfunction
+
+    function automatic [31:0] SRLI (input [4:0] rd, input [4:0] rs1, input [4:0] shamt);
+        return {7'b0000000, shamt, rs1, 3'b101, rd, `OP_I_ARITH};
+    endfunction
+
+    function automatic [31:0] SRAI (input [4:0] rd, input [4:0] rs1, input [4:0] shamt);
+        return {7'b0100000, shamt, rs1, 3'b101, rd, `OP_I_ARITH};
+    endfunction
+
+    function automatic [31:0] SLTI (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b010, rd, `OP_I_ARITH};
+    endfunction
+
+    function automatic [31:0] SLTIU (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b011, rd, `OP_I_ARITH};
+    endfunction
+
+    // ---------- I-type (load) ----------
+    function automatic [31:0] LB (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b000, rd, `OP_I_LOAD};
+    endfunction
+
+    function automatic [31:0] LH (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b001, rd, `OP_I_LOAD};
+    endfunction
+
+    function automatic [31:0] LW (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b010, rd, `OP_I_LOAD};
+    endfunction
+
+    function automatic [31:0] LBU (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b100, rd, `OP_I_LOAD};
+    endfunction
+
+    function automatic [31:0] LHU (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b101, rd, `OP_I_LOAD};
+    endfunction
+
+    // ---------- S-type (store) ----------
+    function automatic [31:0] SB (input [4:0] rs2, input [4:0] rs1, input [11:0] imm);
+        return {imm[11:5], rs2, rs1, 3'b000, imm[4:0], `OP_S};
+    endfunction
+
+    function automatic [31:0] SH (input [4:0] rs2, input [4:0] rs1, input [11:0] imm);
+        return {imm[11:5], rs2, rs1, 3'b001, imm[4:0], `OP_S};
+    endfunction
+
+    function automatic [31:0] SW (input [4:0] rs2, input [4:0] rs1, input [11:0] imm);
+        return {imm[11:5], rs2, rs1, 3'b010, imm[4:0], `OP_S};
+    endfunction
+
+    // ---------- B-type (branch) ----------
+    function automatic [31:0] BEQ (input [4:0] rs1, input [4:0] rs2, input [12:0] imm);
+        return {imm[12], imm[10:5], rs2, rs1, 3'b000, imm[4:1], imm[11], `OP_B};
+    endfunction
+
+    function automatic [31:0] BNE (input [4:0] rs1, input [4:0] rs2, input [12:0] imm);
+        return {imm[12], imm[10:5], rs2, rs1, 3'b001, imm[4:1], imm[11], `OP_B};
+    endfunction
+
+    function automatic [31:0] BLT (input [4:0] rs1, input [4:0] rs2, input [12:0] imm);
+        return {imm[12], imm[10:5], rs2, rs1, 3'b100, imm[4:1], imm[11], `OP_B};
+    endfunction
+
+    function automatic [31:0] BGE (input [4:0] rs1, input [4:0] rs2, input [12:0] imm);
+        return {imm[12], imm[10:5], rs2, rs1, 3'b101, imm[4:1], imm[11], `OP_B};
+    endfunction
+
+    function automatic [31:0] BLTU (input [4:0] rs1, input [4:0] rs2, input [12:0] imm);
+        return {imm[12], imm[10:5], rs2, rs1, 3'b110, imm[4:1], imm[11], `OP_B};
+    endfunction
+
+    function automatic [31:0] BGEU (input [4:0] rs1, input [4:0] rs2, input [12:0] imm);
+        return {imm[12], imm[10:5], rs2, rs1, 3'b111, imm[4:1], imm[11], `OP_B};
+    endfunction
+
+    // ---------- U-type ----------
+    function automatic [31:0] LUI (input [4:0] rd, input [31:0] imm);
+        return {imm[31:12], rd, `OP_U_LUI};
+    endfunction
+
+    function automatic [31:0] AUIPC (input [4:0] rd, input [31:0] imm);
+        return {imm[31:12], rd, `OP_U_AUIPC};
+    endfunction
+
+    // ---------- J-type ----------
+    function automatic [31:0] JAL (input [4:0] rd, input [20:0] imm);
+        return {imm[20], imm[10:1], imm[11], imm[19:12], rd, `OP_J_JAL};
+    endfunction
+
+    function automatic [31:0] JALR (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
+        return {imm, rs1, 3'b000, rd, `OP_I_JALR};
+    endfunction
+
+    // ---------- SYSTEM ----------
+    function automatic [31:0] ECALL ();
+        return {12'h000, 5'd0, 3'b000, 5'd0, 7'b1110011};
+    endfunction
+
+    function automatic [31:0] EBREAK ();
+        return {12'h001, 5'd0, 3'b000, 5'd0, 7'b1110011};
+    endfunction
