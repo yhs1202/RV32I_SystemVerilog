@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-`include "define.sv"
+`include "define.svh"
 
 // Temporary implementation of data memory
 // TODO: Replace with dual-port RAM 

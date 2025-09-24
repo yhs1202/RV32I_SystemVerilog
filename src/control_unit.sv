@@ -1,7 +1,5 @@
 `timescale 1ns/1ps
-
-
-`include "define.sv"
+`include "define.svh"
 
 module control_unit (
     input logic [31:0] instruction_code,
@@ -117,7 +115,7 @@ module control_unit (
     // MemtoReg (0-> ALU result, 1-> memory data)
     always_comb begin : MemtoReg_decoder
         case (opcode)
-        `OP_I_LOAD: 
+        `OP_I_LOAD:
             MemtoReg = 1'b1; // Load from memory
         default: 
             MemtoReg = 1'b0; // Default to ALU result

@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-`include "define.sv"
+`include "define.svh"
 
 module alu_32bit (
     // input logic [2:0] ALUOp,
