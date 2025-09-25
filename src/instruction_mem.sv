@@ -49,7 +49,7 @@ module instruction_mem (
         end
 
         /* I-type arithmetic instructions */
-        if (0) begin
+        if (1) begin
             // addi rd(x5), rs1(x3), imm(4)
             mem[0] = ADDI(5'd5, 5'd3, 12'd4);
             // xori rd(x6), rs1(x3), imm(5)
@@ -70,7 +70,7 @@ module instruction_mem (
             mem[8] = SLTIU(5'd13, 5'd3, 12'd9);
         end
 
-
+        /* S-type and I-type instruction */
         if (0) begin
             /* S-type instructions */
             // sb x14, 4(x0)
@@ -154,6 +154,7 @@ module instruction_mem (
 
         end
 
+        /* U-type and J-type instructions */
         if (0) begin
             /* U-type instructions */
             // lui x5, 0x12345
