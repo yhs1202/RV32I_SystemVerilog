@@ -9,7 +9,7 @@ module RV32I_core (
 
     // control signals
     logic ALUSrc;            // 0-> rs2, 1-> imm
-    logic MemtoReg;          // 0-> ALU result, 1-> memory data
+    logic [1:0] MemtoReg;          // 0-> ALU result, 1-> memory data, 2-> PC+4 (for JAL)
     logic RegWrite;
     logic Branch;            // 0-> no branch, 1-> branch
     logic [4:0] ALUControl;  // see define.sv
@@ -21,6 +21,7 @@ module RV32I_core (
     logic [31:0] mem2reg_mux_out;
     logic branch_taken;
     logic [1:0] PCSrc;
+    logic [31:0] PC_Plus4;
 
 
     // logic [2:0] ALUOp;
@@ -55,15 +56,16 @@ module RV32I_core (
         .ALU_result(ALU_result),
         .MEM_w_data(MEM_w_data),
         .branch_taken(branch_taken),
-        .PC(PC)
+        .PC(PC),
+        .PC_Plus4(PC_Plus4)
     );
 
     mux_n #(
-        .N(2),
+        .N(3),
         .WIDTH(32)
     ) U_MUX_MEM_TO_REG (
         .sel(MemtoReg),
-        .in('{ALU_result, MEM_r_data}),
+        .in('{ALU_result, MEM_r_data, PC_Plus4}),
         .out(mem2reg_mux_out)
     );
 

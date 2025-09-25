@@ -7,7 +7,7 @@ module control_unit (
 
     // control signals
     output logic ALUSrc,            // 0-> rs2, 1-> imm
-    output logic MemtoReg,          // 0-> ALU result, 1-> memory data
+    output logic [1:0] MemtoReg,          // 0-> ALU result, 1-> memory data, 2-> PC+4 (for JAL)
     output logic RegWrite,
     output logic MemRead,
     output logic MemWrite,
@@ -118,9 +118,11 @@ module control_unit (
     always_comb begin : MemtoReg_decoder
         case (opcode)
         `OP_I_LOAD:
-            MemtoReg = 1'b1; // Load from memory
+            MemtoReg = 2'b01; // Load from memory
+        `OP_J_JAL, `OP_I_JALR:
+            MemtoReg = 2'b10; // PC + 4 for JAL and JALR
         default: 
-            MemtoReg = 1'b0; // Default to ALU result
+            MemtoReg = 2'b00; // Default to ALU result
         endcase
     end
 

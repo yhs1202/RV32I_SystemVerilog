@@ -17,7 +17,8 @@ module datapath (
     output logic [31:0] ALU_result,  // mem_addr
     output logic [31:0] MEM_w_data,  // mem_w_data
     output logic branch_taken,
-    output logic [31:0] PC
+    output logic [31:0] PC,
+    output logic [31:0] PC_Plus4
 );
 
     logic [31:0] r_data_0, r_data_1;
@@ -26,11 +27,9 @@ module datapath (
     logic [31:0] mem2reg_mux_out;
 
     logic N, Z, C, V;
-    logic [31:0] PC_Plus4;
 
     assign MEM_w_data = r_data_1;
 
-    // jal logic, will be used in the future
     // assign REG_w_data = MemtoReg ? MEM_r_data:
                         // ((jal | jalr) ? PC_Plus4 : ALU_result);
 
@@ -102,7 +101,7 @@ module datapath (
         .ALU_result(ALU_result),
         .PCSrc(PCSrc),    // 00: PC+4, 01: branch, 10: jump, 11: jalr
 
-        // .PC_Plus4(PC_Plus4),    // for jal, will be used in the future
+        .PC_Plus4(PC_Plus4),    // for jal, will be used in the future
         .PC_reg(PC)
     );
 
