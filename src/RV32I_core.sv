@@ -19,12 +19,15 @@ module RV32I_core (
     logic [31:0] MEM_w_data;
     logic [31:0] MEM_r_data;
     logic [31:0] mem2reg_mux_out;
+    logic branch_taken;
+    logic [1:0] PCSrc;
 
 
     // logic [2:0] ALUOp;
 
     control_unit U_CONTROL_UNIT (
         .instruction_code(instruction_code),
+        .branch_taken(branch_taken),
 
         .ALUSrc(ALUSrc),
         .MemtoReg(MemtoReg),
@@ -32,6 +35,7 @@ module RV32I_core (
         .MemRead(MemRead),
         .MemWrite(MemWrite),
         .Branch(Branch),
+        .PCSrc(PCSrc),
         // .ALUOp(ALUOp),
         .ALUControl(ALUControl)
     );
@@ -44,11 +48,13 @@ module RV32I_core (
         .RegWrite(RegWrite),
         .REG_w_data(mem2reg_mux_out),
         .Branch(Branch),
+        .PCSrc(PCSrc),
         // .ALUOp(ALUOp),
         .ALUControl(ALUControl),
 
         .ALU_result(ALU_result),
         .MEM_w_data(MEM_w_data),
+        .branch_taken(branch_taken),
         .PC(PC)
     );
 

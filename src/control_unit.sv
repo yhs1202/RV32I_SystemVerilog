@@ -3,6 +3,7 @@
 
 module control_unit (
     input logic [31:0] instruction_code,
+    input logic branch_taken,
 
     // control signals
     output logic ALUSrc,            // 0-> rs2, 1-> imm
@@ -11,6 +12,7 @@ module control_unit (
     output logic MemRead,
     output logic MemWrite,
     output logic Branch,            // 0-> no branch, 1-> branch
+    output logic [1:0] PCSrc,       // 0-> PC+4, 1-> branch target, 2-> JAL target, 3-> JALR target
     output logic [4:0] ALUControl
 
 );
@@ -119,6 +121,26 @@ module control_unit (
             MemtoReg = 1'b1; // Load from memory
         default: 
             MemtoReg = 1'b0; // Default to ALU result
+        endcase
+    end
+
+    // Branch
+    always_comb begin : Branch_decoder
+        case (opcode)
+        `OP_B: 
+            Branch = 1'b1; // Branch instruction
+        default: 
+            Branch = 1'b0; // Default to no branch
+        endcase
+    end
+
+    // PCSrc
+    always_comb begin : PCSrc_decoder
+        case (opcode)
+            `OP_B:      PCSrc = (branch_taken) ? 2'b01 : 2'b00; // Branch target or next instruction
+            `OP_J_JAL:  PCSrc = 2'b10; // JAL target
+            `OP_I_JALR: PCSrc = 2'b11; // JALR target
+            default:    PCSrc = 2'b00; // Default to next sequential instruction (PC + 4)
         endcase
     end
 endmodule

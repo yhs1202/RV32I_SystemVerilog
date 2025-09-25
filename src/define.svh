@@ -31,3 +31,12 @@
 `define F3_WORD  3'b010
 `define F3_UBYTE 3'b100
 `define F3_UHALF 3'b101
+
+
+/* Define funct3 codes for branch */
+`define F3_BEQ  3'b000
+`define F3_BNE  3'b001
+`define F3_BLT  3'b100
+`define F3_BGE  3'b101
+`define F3_BLTU 3'b110
+`define F3_BGEU 3'b111

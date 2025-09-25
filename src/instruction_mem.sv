@@ -7,6 +7,7 @@ module instruction_mem (
 );
 
     logic [31:0] mem [0:31];
+    assign instruction_code = mem[addr[31:2]]; // word aligned
 
     initial begin
         #10;
@@ -70,28 +71,35 @@ module instruction_mem (
         end
 
 
-        if (1) begin
+        if (0) begin
             /* S-type instructions */
             // sb x14, 4(x0)
+            // mem[0] = 32'h00E0_0223;
             mem[0] = SB(5'd14, 5'd0, 12'd4);
             // sh x23, 8(x0)
+            // mem[1] = 32'h0170_1423;
             mem[1] = SH(5'd23, 5'd0, 12'd8);
             // sw x24, 12(x0)
+            // mem[2] = 32'h0180_2623;
             mem[2] = SW(5'd24, 5'd0, 12'd12);
 
             /* I-type load instructions */
             // lb x14, 4(x0)
+            // mem[3] = 32'h0040_0703;
             mem[3] = LB(5'd14, 5'd0, 12'd4);
             // lh x23, 8(x0)
+            // mem[4] = 32'h0080_1B83;
             mem[4] = LH(5'd23, 5'd0, 12'd8);
             // lw x24, 12(x0)
+            // mem[5] = 32'h00C0_2283;
             mem[5] = LW(5'd24, 5'd0, 12'd12);
             // lw x24, 12(x2)
+            // mem[6] = 32'h00C1_2283;
             mem[6] = LW(5'd24, 5'd2, 12'd12);
         end
 
         /* B-type instructions */
-        if (0) begin
+        if (1) begin
             // beq x5, x6, 16
             mem[0] = BEQ(5'd5, 5'd6, 13'd16);
             // bne x5, x6, 20
@@ -122,5 +130,4 @@ module instruction_mem (
 
     end
 
-    assign instruction_code = mem[addr[31:2]]; // word aligned
 endmodule
