@@ -10,10 +10,15 @@ module instruction_mem (
     assign instruction_code = mem[addr[31:2]]; // word aligned
 
     initial begin
+        // initialize instruction memory
+        // genvar i;
+        for (int i = 0; i < 64; i = i + 1) 
+            mem[i] = 32'b0;
         #10;
-                                        //      func7     rs2    rs1  func3   rd    opcode
+
         /* R-type instructions */
         if (0) begin
+                                        //      func7     rs2    rs1  func3   rd    opcode
             // add rd(x5), rs1(x3), rs2(x4)
             // mem[0] = 32'h0041_82B3;  // 32'b0000_000 0_0100 _0001_1 000 _0010_1 011_0011
             mem[0] = ADD(5'd5, 5'd3, 5'd4);
@@ -151,7 +156,6 @@ module instruction_mem (
             // addi x10, x0, 1
             mem[46] = ADDI(5'd9, 5'd9, 12'd2048);   
             // addi x11, x0, INT_MIN (0x8000_0000, -2147483648)
-
         end
 
         /* U-type and J-type instructions */
