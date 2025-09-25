@@ -26,14 +26,14 @@ module alu_32bit (
     assign Z = (result == 32'b0);
 
     always_comb begin : ALU_operations
-        N = 1'b0; Z = 1'b1; C = 1'b0; V = 1'b0;
+        C = 1'b0; V = 1'b0;
         case (ALUControl)
             `ALU_ADD: begin
                 {C, result} = a + b;
                 V = (~(a[31]^b[31]) & (a[31]^result[31]));
             end
             `ALU_SUB: begin
-                {C, result} = a - b;
+                {C, result} = a - b;    // C = ~borrow
                 V = ((a[31]^b[31]) & (a[31]^result[31]));
             end
             `ALU_XOR: result = a ^ b;

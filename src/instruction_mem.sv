@@ -6,7 +6,7 @@ module instruction_mem (
     output logic [31:0] instruction_code
 );
 
-    logic [31:0] mem [0:31];
+    logic [31:0] mem [0:63];
     assign instruction_code = mem[addr[31:2]]; // word aligned
 
     initial begin
@@ -99,19 +99,59 @@ module instruction_mem (
         end
 
         /* B-type instructions */
-        if (1) begin
-            // beq x5, x6, 16
-            mem[0] = BEQ(5'd5, 5'd6, 13'd16);
-            // bne x5, x6, 20
-            mem[1] = BNE(5'd5, 5'd6, 13'd20);
-            // blt x5, x6, 24
-            mem[2] = BLT(5'd5, 5'd6, 13'd24);
-            // bge x5, x6, 28
-            mem[3] = BGE(5'd5, 5'd6, 13'd28);
-            // bltu x5, x6, 32
-            mem[4] = BLTU(5'd5, 5'd6, 13'd32);
-            // bgeu x5, x6, 36
-            mem[5] = BGEU(5'd5, 5'd6, 13'd36);
+        if (0) begin
+            // initialize registers
+            // addi x5, x0, 10
+            // addi x6, x0, 10
+            // addi x7, x0, 20
+            mem[0] = ADDI(5'd5, 5'd0, 12'd10);
+            mem[1] = ADDI(5'd6, 5'd0, 12'd10);
+            mem[2] = ADDI(5'd7, 5'd0, 12'd20);
+
+            // branch instructions start
+            // beq test
+            mem[3] = BEQ(5'd5, 5'd6, 13'd20); // -> branch taken -> skip next instruction (jump to mem[8]
+            mem[4] = ADDI(5'd10, 5'd0, 12'd1); // this instruction should be skipped
+            mem[8] = ADDI(5'd11, 5'd0, 12'd2); // *target of branch*
+
+            // bne test
+            mem[9] = BNE(5'd5, 5'd6, 13'd20); // -> should be not taken
+            mem[10] = BNE(5'd5, 5'd7, 13'd20); // -> branch taken -> skip next instruction (jump to mem[15])
+            mem[11] = ADDI(5'd12, 5'd0, 3); // this instruction should be skipped
+            mem[15] = ADDI(5'd13, 5'd0, 4); // *target of branch*
+
+            // blt test
+            mem[16] = BLT(5'd7, 5'd5, 13'd20); // -> should be not taken (20<10 -> False)
+            mem[17] = BLT(5'd5, 5'd7, 13'd20); // -> branch taken (10<20 -> True) -> skip next instruction (jump to mem[22])
+            mem[18] = ADDI(5'd14, 5'd0, 5); // this instruction should be skipped
+            mem[22] = ADDI(5'd15, 5'd0, 6); // *target of branch*
+
+            // bge test
+            mem[23] = BGE(5'd5, 5'd7, 13'd20); // -> should be not taken (10>=20 -> False)
+            mem[24] = BGE(5'd7, 5'd5, 13'd20); // -> branch taken (20>=10 -> True) -> skip next instruction (jump to mem[29])
+            mem[25] = ADDI(5'd16, 5'd0, 7); // this instruction should be skipped
+            mem[29] = ADDI(5'd17, 5'd0, 8); // *target of branch*
+            
+            // bltu test
+            mem[30] = ADDI(5'd8, 5'd0, -1); // x8 = -1 (0xFFFF_FFFF)
+            mem[31] = BLTU(5'd5, 5'd8, 13'd20); // -> should be not taken (10<-1 -> False)
+            mem[32] = BLTU(5'd8, 5'd5, 13'd20); // -> branch taken (-1<10 -> True) -> skip next instruction (jump to mem[37])
+            mem[33] = ADDI(5'd18, 5'd0, 9); // this instruction should be skipped
+            mem[37] = ADDI(5'd19, 5'd0, 10); // *target of branch*
+
+            // bgeu test
+            mem[38] = BGEU(5'd8, 5'd5, 13'd20); // -> should be not taken (-1>=10 -> False)
+            mem[39] = BGEU(5'd5, 5'd8, 13'd20); // -> branch taken (10>=-1 -> True) -> skip next instruction (jump to mem[44])
+            mem[40] = ADDI(5'd20, 5'd0, 11); // this instruction should be skipped
+            mem[44] = ADDI(5'd21, 5'd0, 12); // *target of branch*
+
+            // overflow test
+            // addi x9, x0, INT_MAX (0x7FFF_FFFF, +2147483647)
+            mem[45] = ADDI(5'd9, 5'd0, 12'hFFF); // lower 12 bits
+            // addi x10, x0, 1
+            mem[46] = ADDI(5'd9, 5'd9, 12'd2048);   
+            // addi x11, x0, INT_MIN (0x8000_0000, -2147483648)
+
         end
 
         if (0) begin
