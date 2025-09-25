@@ -12,13 +12,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="15237fs"></ZoomStartTime>
-      <ZoomEndTime time="83192fs"></ZoomEndTime>
+      <ZoomStartTime time="35000fs"></ZoomStartTime>
+      <ZoomEndTime time="245001fs"></ZoomEndTime>
       <Cursor1Time time="210000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="380"></NameColumnWidth>
-      <ValueColumnWidth column_width="184"></ValueColumnWidth>
+      <ValueColumnWidth column_width="180"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="5" />
    <wvobject fp_name="/tb_RV32I_top/clk" type="logic">
@@ -58,9 +58,9 @@
          <obj_property name="ElementShortName">ALUSrc</obj_property>
          <obj_property name="ObjectShortName">ALUSrc</obj_property>
       </wvobject>
-      <wvobject fp_name="/tb_RV32I_top/U_RV32I_TOP/U_RV32I_CORE/U_CONTROL_UNIT/MemtoReg" type="logic">
-         <obj_property name="ElementShortName">MemtoReg</obj_property>
-         <obj_property name="ObjectShortName">MemtoReg</obj_property>
+      <wvobject fp_name="/tb_RV32I_top/U_RV32I_TOP/U_RV32I_CORE/U_CONTROL_UNIT/MemtoReg" type="array">
+         <obj_property name="ElementShortName">MemtoReg[1:0]</obj_property>
+         <obj_property name="ObjectShortName">MemtoReg[1:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/tb_RV32I_top/U_RV32I_TOP/U_RV32I_CORE/U_CONTROL_UNIT/RegWrite" type="logic">
          <obj_property name="ElementShortName">RegWrite</obj_property>
@@ -90,6 +90,7 @@
    <wvobject fp_name="group47" type="group">
       <obj_property name="label">MEMORY</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/tb_RV32I_top/U_RV32I_TOP/U_RV32I_CORE/U_DATA_MEMORY/clk" type="logic">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -133,16 +134,15 @@
       <wvobject fp_name="group424" type="group">
          <obj_property name="label">MUX_MEMtoREG</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/tb_RV32I_top/U_RV32I_TOP/U_RV32I_CORE/U_MUX_MEM_TO_REG/sel" type="array">
-            <obj_property name="ElementShortName">sel[0:0]</obj_property>
-            <obj_property name="ObjectShortName">sel[0:0]</obj_property>
+            <obj_property name="ElementShortName">sel[1:0]</obj_property>
+            <obj_property name="ObjectShortName">sel[1:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/tb_RV32I_top/U_RV32I_TOP/U_RV32I_CORE/U_MUX_MEM_TO_REG/in" type="array">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">in[0:1][31:0]</obj_property>
-            <obj_property name="ObjectShortName">in[0:1][31:0]</obj_property>
-            <obj_property name="label">in[0:1][31:0] -&gt; ALU vs MEM r_data</obj_property>
+            <obj_property name="ElementShortName">in[0:2][31:0]</obj_property>
+            <obj_property name="ObjectShortName">in[0:2][31:0]</obj_property>
+            <obj_property name="label">in[0:2][31:0] -&gt; ALU vs MEM r_data vs PC+4</obj_property>
          </wvobject>
          <wvobject fp_name="/tb_RV32I_top/U_RV32I_TOP/U_RV32I_CORE/U_MUX_MEM_TO_REG/out" type="array">
             <obj_property name="ElementShortName">out[31:0]</obj_property>
@@ -215,7 +215,6 @@
             <obj_property name="CustomSignalColor">#FF00FF</obj_property>
             <obj_property name="UseCustomSignalColor">true</obj_property>
             <obj_property name="label">RegFile_mem[0:31][31:0]</obj_property>
-            <obj_property name="isExpanded"></obj_property>
          </wvobject>
       </wvobject>
       <wvobject fp_name="group34" type="group">
@@ -307,7 +306,6 @@
       <wvobject fp_name="group268" type="group">
          <obj_property name="label">BRANCH_LOGIC</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/tb_RV32I_top/U_RV32I_TOP/U_RV32I_CORE/U_CONTROL_UNIT/instruction_code" type="array">
             <obj_property name="ElementShortName">instruction_code[31:0]</obj_property>
             <obj_property name="ObjectShortName">instruction_code[31:0]</obj_property>
