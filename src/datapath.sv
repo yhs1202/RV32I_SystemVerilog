@@ -6,7 +6,8 @@ module datapath (
     input logic [31:0] instruction_code,
 
     // control signals
-    input logic ALUSrc,            // 0-> rs2, 1-> imm
+    input logic ALUSrc_A,            // 0-> rs1, 1-> pc (for auipc)
+    input logic ALUSrc_B,            // 0-> rs2, 1-> imm
     input logic RegWrite,
     input logic [31:0] REG_w_data,
     input logic Branch,            // 0-> no branch, 1-> branch
@@ -19,14 +20,15 @@ module datapath (
     output logic branch_taken,
     output logic [31:0] PC,
     output logic [31:0] PC_Plus4
+    output logic [31:0] imm_ext;
 );
 
     logic [31:0] r_data_0, r_data_1;
-    logic [31:0] alu_b;
-    logic [31:0] imm_ext;
+    logic [31:0] alu_a, alu_b;
     logic [31:0] mem2reg_mux_out;
 
     logic N, Z, C, V;
+    logic 
 
     assign MEM_w_data = r_data_1;
 
@@ -57,7 +59,7 @@ module datapath (
     );
 
     alu_32bit U_ALU_32BIT (
-        .a(r_data_0),
+        .a(alu_a),
         .b(alu_b),
         // .ALUOp(ALUOp),
         .ALUControl(ALUControl),
@@ -77,8 +79,17 @@ module datapath (
     mux_n #(
         .N(2),
         .WIDTH(32)
-    ) U_MUX_ALU_SRC (
-        .sel(ALUSrc),
+    ) U_MUX_ALU_SRC_A (
+        .sel(ALUSrc_A),
+        .in('{r_data_0, PC}),
+        .out(alu_a)
+    );
+
+    mux_n #(
+        .N(2),
+        .WIDTH(32)
+    ) U_MUX_ALU_SRC_B (
+        .sel(ALUSrc_B),
         .in('{r_data_1, imm_ext}),
         .out(alu_b)
     );
