@@ -4,8 +4,8 @@
 module alu_32bit (
     // input logic [2:0] ALUOp,
     input logic [4:0] ALUControl,
-    input logic [31:0] a,
-    input logic [31:0] b,
+    input logic signed [31:0] a,
+    input logic signed [31:0] b,
 
     output logic N, Z, C, V,
     /*
@@ -42,7 +42,7 @@ module alu_32bit (
             `ALU_SLL: result = a << b[4:0];
             `ALU_SRL: result = a >> b[4:0];
             `ALU_SRA: result = $signed(a) >>> b[4:0];
-            `ALU_SLT: result = {31'b0, a < b};
+            `ALU_SLT: result = {31'b0, $signed(a) < $signed(b)};
             `ALU_SLTU: result = {31'b0, $unsigned(a) < $unsigned(b)};
             default: result = 32'b0;    // NO OPERATION
         endcase
