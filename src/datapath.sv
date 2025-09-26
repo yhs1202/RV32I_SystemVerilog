@@ -19,8 +19,8 @@ module datapath (
     output logic [31:0] MEM_w_data,  // mem_w_data
     output logic branch_taken,
     output logic [31:0] PC,
-    output logic [31:0] PC_Plus4
-    output logic [31:0] imm_ext;
+    output logic [31:0] PC_Plus4,
+    output logic [31:0] imm_ext
 );
 
     logic [31:0] r_data_0, r_data_1;
@@ -28,7 +28,6 @@ module datapath (
     logic [31:0] mem2reg_mux_out;
 
     logic N, Z, C, V;
-    logic 
 
     assign MEM_w_data = r_data_1;
 

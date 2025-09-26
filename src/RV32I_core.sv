@@ -23,6 +23,7 @@ module RV32I_core (
     logic branch_taken;
     logic [1:0] PCSrc;
     logic [31:0] PC_Plus4;
+    logic [31:0] imm_ext;
 
 
     // logic [2:0] ALUOp;
