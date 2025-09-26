@@ -44,7 +44,7 @@ module alu_32bit (
             `ALU_SRA: result = $signed(a) >>> b[4:0];
             `ALU_SLT: result = {31'b0, a < b};
             `ALU_SLTU: result = {31'b0, $unsigned(a) < $unsigned(b)};
-            default: result = 32'bx;    // NO OPERATION
+            default: result = 32'b0;    // NO OPERATION
         endcase
     end
 endmodule
