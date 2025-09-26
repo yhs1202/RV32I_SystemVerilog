@@ -132,6 +132,8 @@ module control_unit (
             MemtoReg = 2'b01; // Load from memory
         `OP_J_JAL, `OP_I_JALR:
             MemtoReg = 2'b10; // PC + 4 for JAL and JALR
+        `OP_U_LUI:
+            MemtoReg = 2'b11; // immediate for LUI
         default: 
             MemtoReg = 2'b00; // Default to ALU result
         endcase
