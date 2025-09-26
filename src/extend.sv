@@ -11,7 +11,7 @@ module extend (
 
     always_comb begin
         case (opcode)
-            `OP_I_LOAD, `OP_I_JALR: begin // I-type (000)
+            `OP_I_LOAD, `OP_I_JALR: begin // I-type
                 imm_ext = {{20{instruction_code[31]}}, instruction_code[31:20]};
             end
             `OP_I_ARITH: begin
@@ -22,16 +22,16 @@ module extend (
                     default: imm_ext = {{20{instruction_code[31]}}, instruction_code[31:20]}; // sign-extend for other I-type
                 endcase
             end
-            `OP_S: begin // S-type (001)
+            `OP_S: begin // S-type
                 imm_ext = {{20{instruction_code[31]}}, instruction_code[31:25], instruction_code[11:7]};
             end
-            `OP_B: begin // B-type (010)
+            `OP_B: begin // B-type
                 imm_ext = {{19{instruction_code[31]}}, instruction_code[31], instruction_code[7], instruction_code[30:25], instruction_code[11:8], 1'b0};   // Shift left by 1
             end
-            `OP_U_LUI, `OP_U_AUIPC: begin // U-type (100)
+            `OP_U_LUI, `OP_U_AUIPC: begin // U-type
                 imm_ext = {instruction_code[31:12], 12'b0};
             end
-            `OP_J_JAL: begin // J-type (011)
+            `OP_J_JAL: begin // J-type
                 imm_ext = {{11{instruction_code[31]}}, instruction_code[31], instruction_code[19:12], instruction_code[20], instruction_code[30:21], 1'b0}; // Shift left by 1
             end
             default: begin
