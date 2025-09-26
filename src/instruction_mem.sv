@@ -6,17 +6,16 @@ module instruction_mem (
     output logic [31:0] instruction_code
 );
 
-    logic [31:0] mem [0:63];
+    logic [31:0] mem [0:63];    // 64 words of instruction memory (256 bytes)
     assign instruction_code = mem[addr[31:2]]; // word aligned
 
     initial begin
         // initialize instruction memory
-        // genvar i;
         for (int i = 0; i < 64; i = i + 1) 
             mem[i] = 32'b0;
         #10;
 
-        /* R-type instructions */
+        /* R-type test instructions */
         if (0) begin
                                         //      func7     rs2    rs1  func3   rd    opcode
             // add rd(x5), rs1(x3), rs2(x4)
@@ -50,11 +49,11 @@ module instruction_mem (
             // mem[9] = 32'h0042_B333;  // 32'b0000_000 0_0100 _0010_1 011 _0011_0 011_0011
             mem[9] = SLTU(5'd6, 5'd5, 5'd4);
             // nop
-            mem[10] = 32'h0000_0013; // 32'b0000_000 0_0000 _0000_0 000 _0000_0 001_0011
+            mem[10] = 32'hdead_beef;
         end
 
-        /* I-type arithmetic instructions */
-        if (1) begin
+        /* I-type arithmetic test instructions */
+        if (0) begin
             // addi rd(x5), rs1(x3), imm(4)
             mem[0] = ADDI(5'd5, 5'd3, 12'd4);
             // xori rd(x6), rs1(x3), imm(5)
@@ -73,9 +72,28 @@ module instruction_mem (
             mem[7] = SLTI(5'd12, 5'd3, 12'd8);
             // sltiu rd(x13), rs1(x3), imm(9)
             mem[8] = SLTIU(5'd13, 5'd3, 12'd9);
+
+            /* test for negative immediate and overflow */
+            // slti rd(x14), rs1(x3), imm(255)
+            // imm = 255 -> 0x0FF, slti = 0x35 < 255 -> True(1)
+            mem[9] = SLTI(5'd14, 5'd3, 12'h0FF);
+
+            // slti rd(x15), rs1(x3), imm(-1)
+            // imm = -1 -> 0xFFF, slti = 0x35 < -1 -> False(0)
+            mem[10] = SLTI(5'd15, 5'd3, 12'hFFF);
+
+            // sltiu rd(x16), rs1(x3), imm(4095)
+            // imm = 4095 -> 0xFFF, sltiu = 0x35 < 4095 -> True(1)
+            mem[11] = SLTIU(5'd16, 5'd3, 12'hFFF);
+
+            // addi rd(x4), rs1(x3), imm(-2048)
+            mem[12] = ADDI(5'd4, 5'd3, 12'h800); // x4 = 50 - 2048 = -1998
+
+            // srai rd(x17), rs1(x3), shamt(3)
+            mem[13] = SRAI(5'd17, 5'd4, 5'd3); // 0xFFFF_F835 >> 3 = 0xFFFF_FF06
         end
 
-        /* S-type and I-type instruction */
+        /* S-type and I-type (load) test instructions */
         if (0) begin
             /* S-type instructions */
             // sb x14, 4(x0)
@@ -103,7 +121,7 @@ module instruction_mem (
             mem[6] = LW(5'd24, 5'd2, 12'd12);
         end
 
-        /* B-type instructions */
+        /* B-type test instructions */
         if (0) begin
             // initialize registers
             // addi x5, x0, 10
@@ -158,19 +176,38 @@ module instruction_mem (
             // addi x11, x0, INT_MIN (0x8000_0000, -2147483648)
         end
 
-        /* U-type and J-type instructions */
-        if (0) begin
-            /* U-type instructions */
-            // lui x5, 0x12345
+        /* U-type and J-type test instructions */
+        if (1) begin
+            /* U-type Instructions */
+            // lui x5, 0x12345 -> x5 = 0x12345_000 (imm << 12 check)
             mem[0] = LUI(5'd5, 32'h12345_000);
-            // auipc x6, 0x12345
-            mem[1] = AUIPC(5'd6, 32'h12345_000);
+            // auipc x6, 0x1 -> x6 = PC + 0x1000 (pc+(imm<<12) check)
+            mem[1] = AUIPC(5'd6, 32'h00001_000);
 
-            /* J-type instructions */
-            // jal x1, 256
-            mem[2] = JAL(5'd1, 21'd256);
-            // jalr x1, x2, 4
-            mem[3] = JALR(5'd1, 5'd2, 12'd4);
+            /* J-type Instructions */
+            // jal x1, 8 -> x1 = PC+4, jump to PC+8
+            mem[2] = JAL(5'd1, 21'd8);
+            // addi x7, x0, 111 -> skipped
+            mem[3] = ADDI(5'd7, 5'd0, 12'h111);
+            // addi x7, x0, 222 -> jal target
+            mem[4] = ADDI(5'd7, 5'd0, 12'h222);
+
+
+            // lui x3, 0x0 -> x3 = 0x0
+            mem[5] = LUI(5'd3, 32'h00000_000);
+            // addi x3, x3, 50 -> x3 = 50 (for jalr test)
+            mem[6] = ADDI(5'd3, 5'd3, 12'd50);
+            // jalr x2, x3, 16 -> x2 = PC+4 (32'd28), jump to x3+16 (50+16=66)
+            mem[7] = JALR(5'd2, 5'd3, 12'd16);
+            // addi x8, x0, 123 -> skipped
+            mem[8] = ADDI(5'd8, 5'd0, 12'h123);
+            // addi x8, x0, 456 -> skipped
+            mem[9] = ADDI(5'd8, 5'd0, 12'h456);
+
+            // addi x8, x0, 789 -> jalr target?
+            mem[16] = ADDI(5'd8, 5'd0, 12'h777);
+            // addi x8, x0, 999 -> jalr target?
+            mem[17] = ADDI(5'd8, 5'd0, 12'h888);
         end
 
     end
