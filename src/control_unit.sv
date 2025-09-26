@@ -6,7 +6,8 @@ module control_unit (
     input logic branch_taken,
 
     // control signals
-    output logic ALUSrc,            // 0-> rs2, 1-> imm
+    output logic ALUSrc_A,            // 0-> rs1, 1-> pc (for auipc)
+    output logic ALUSrc_B,            // 0-> rs2, 1-> imm
     output logic [1:0] MemtoReg,          // 0-> ALU result, 1-> memory data, 2-> PC+4 (for JAL)
     output logic RegWrite,
     output logic MemRead,
@@ -80,14 +81,24 @@ module control_unit (
         endcase
     end
 
-    // ALUSrc (0-> rs2, 1-> imm)
-    always_comb begin : ALUSrc_decoder
+    // ALUSrc_A (0-> rs1, 1-> pc (for auipc))
+    always_comb begin : ALUSrc_A_decoder
+        case (opcode)
+        `OP_U_AUIPC: 
+            ALUSrc_A = 1'b1; // Use PC
+        default: 
+            ALUSrc_A = 1'b0; // Use rs1
+        endcase
+    end
+
+    // ALUSrc_B (0-> rs2, 1-> imm)
+    always_comb begin : ALUSrc_B_decoder
         case (opcode)
         `OP_R, `OP_B: 
-            ALUSrc = 1'b0; // Use rs2
+            ALUSrc_B = 1'b0; // Use rs2
         default: 
         // `OP_I_ARITH, `OP_I_LOAD, `OP_I_JALR, `OP_S, `OP_U_LUI, `OP_U_AUIPC, `OP_J_JAL: 
-            ALUSrc = 1'b1; // Use immediate -> decoded in extend.sv
+            ALUSrc_B = 1'b1; // Use immediate -> decoded in extend.sv
         endcase
     end
 
