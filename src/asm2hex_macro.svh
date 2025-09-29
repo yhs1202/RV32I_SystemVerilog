@@ -1,9 +1,14 @@
 `include "define.svh"
 
 // RV32I Instruction Macros
-// Use: `INSTRUCTION_MACRO_NAME([4:0] rd, [4:0] rs1, [4:0] rs2 / [11(I_a)/11(I_l)/12(S)/19(B)/20():0]imm / [4:0] shamt)
+// Use: INSTRUCTION_MACRO_NAME([4:0] rd, [4:0] rs1, [4:0] rs2 / [11(I_a)/11(I_l)/12(S)/19(B)/20():0]imm / [4:0] shamt)
 
-    // ---------- R-type ----------
+    /* ---------- R-type ----------
+    add rd, rs1, rs2
+        (5) (5)  (5)
+    func7, rs2, rs1, func3, rd, opcode
+    (7)   (5)  (5)   (3)   (5)  (7)
+    */
     function automatic [31:0] ADD (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
         return {7'b0000000, rs2, rs1, 3'b000, rd, `OP_R};
     endfunction
@@ -44,7 +49,14 @@
         return {7'b0000000, rs2, rs1, 3'b011, rd, `OP_R};
     endfunction
 
-    // ---------- I-type (arith) ----------
+
+
+    /* ---------- I-type (arith) ----------
+    addi rd, rs1, imm
+        (5) (5)   (12)
+    imm, rs1, func3, rd, opcode
+    (12) (5)   (3)   (5)  (7)
+    */
     function automatic [31:0] ADDI (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
         return {imm, rs1, 3'b000, rd, `OP_I_ARITH};
     endfunction
@@ -81,7 +93,12 @@
         return {imm, rs1, 3'b011, rd, `OP_I_ARITH};
     endfunction
 
-    // ---------- I-type (load) ----------
+    /* ---------- I-type (load) ----------
+    lw rd, imm(rs1)
+      (5)  (12)(5)
+    imm, rs1, func3, rd, opcode
+    (12) (5)   (3)   (5)  (7)
+    */
     function automatic [31:0] LB (input [4:0] rd, input [4:0] rs1, input [11:0] imm);
         return {imm, rs1, 3'b000, rd, `OP_I_LOAD};
     endfunction
@@ -102,7 +119,12 @@
         return {imm, rs1, 3'b101, rd, `OP_I_LOAD};
     endfunction
 
-    // ---------- S-type (store) ----------
+    /* ---------- S-type (store) ----------
+    sw rs2, imm(rs1)
+       (5)  (12) (5)
+    imm[11:5], rs2, rs1, func3, imm[4:0], opcode
+       (7)     (5)  (5)   (3)     (5)      (7)
+    */
     function automatic [31:0] SB (input [4:0] rs2, input [4:0] rs1, input [11:0] imm);
         return {imm[11:5], rs2, rs1, 3'b000, imm[4:0], `OP_S};
     endfunction
@@ -115,7 +137,12 @@
         return {imm[11:5], rs2, rs1, 3'b010, imm[4:0], `OP_S};
     endfunction
 
-    // ---------- B-type (branch) ----------
+    /* ---------- B-type (branch) ----------
+    beq rs1, rs2, imm
+       (5)  (5)   (13)
+    imm[12], imm[10:5], rs2, rs1, func3, imm[4:1], imm[11], opcode
+      (1)       (6)     (5)  (5)   (3)     (4)       (1)     (7)
+    */
     function automatic [31:0] BEQ (input [4:0] rs1, input [4:0] rs2, input [12:0] imm);
         return {imm[12], imm[10:5], rs2, rs1, 3'b000, imm[4:1], imm[11], `OP_B};
     endfunction
@@ -140,16 +167,26 @@
         return {imm[12], imm[10:5], rs2, rs1, 3'b111, imm[4:1], imm[11], `OP_B};
     endfunction
 
-    // ---------- U-type ----------
-    function automatic [31:0] LUI (input [4:0] rd, input [31:0] imm);
-        return {imm[31:12], rd, `OP_U_LUI};
+    /* ---------- U-type ----------
+    lui rd, imm
+        (5) (20)
+    imm, rd, opcode
+    (20) (5)  (7)
+    */
+    function automatic [31:0] LUI (input [4:0] rd, input [19:0] imm);
+        return {imm, rd, `OP_U_LUI};
     endfunction
 
-    function automatic [31:0] AUIPC (input [4:0] rd, input [31:0] imm);
-        return {imm[31:12], rd, `OP_U_AUIPC};
+    function automatic [31:0] AUIPC (input [4:0] rd, input [19:0] imm);
+        return {imm, rd, `OP_U_AUIPC};
     endfunction
 
-    // ---------- J-type ----------
+    /* ---------- J-type ----------
+    jal rd, imm
+       (5)  (20)
+    imm[20], imm[10:1], imm[11], imm[19:12], rd, opcode
+      (1)      (10)       (1)       (8)      (5)  (7)
+    */
     function automatic [31:0] JAL (input [4:0] rd, input [20:0] imm);
         return {imm[20], imm[10:1], imm[11], imm[19:12], rd, `OP_J_JAL};
     endfunction
