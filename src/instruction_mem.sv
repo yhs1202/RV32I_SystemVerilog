@@ -177,7 +177,7 @@ module instruction_mem (
         end
 
         /* U-type and J-type test instructions */
-        if (1) begin
+        if (0) begin
             /* U-type Instructions */
             // lui x5, 0x12345 -> x5 = 0x12345_000 (imm << 12 check)
             mem[0] = LUI(5'd5, 20'h12345);
@@ -185,7 +185,7 @@ module instruction_mem (
             mem[1] = AUIPC(5'd6, 20'h00001);
 
             /* J-type Instructions */
-            // jal x1, 8 -> x1 = PC+4(12)->actual:0xc(?????), jump to PC+8(16) -> working
+            // jal x1, 8 -> x1 = PC+4(12)-> actual:0xc -> checked , jump to PC+8(16) -> working
             mem[2] = JAL(5'd1, 21'd8);
             // addi x7, x0, 0x111 -> skipped
             mem[3] = ADDI(5'd7, 5'd0, 12'h111);
@@ -206,6 +206,10 @@ module instruction_mem (
 
             // addi x8, x0, 0x777 -> jalr target (66 = 0x42 -> mem[16] (word aligned))
             mem[16] = ADDI(5'd8, 5'd0, 12'h777);
+        end
+
+        if (1) begin
+            $readmemh("./0929.mem", mem);
         end
     end
 
