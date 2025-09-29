@@ -180,12 +180,12 @@ module instruction_mem (
         if (1) begin
             /* U-type Instructions */
             // lui x5, 0x12345 -> x5 = 0x12345_000 (imm << 12 check)
-            mem[0] = LUI(5'd5, 32'h12345_000);
+            mem[0] = LUI(5'd5, 20'h12345);
             // auipc x6, 0x1 -> x6 = PC(4) + 0x1000 (pc+(imm<<12) check)
-            mem[1] = AUIPC(5'd6, 32'h00001_000);
+            mem[1] = AUIPC(5'd6, 20'h00001);
 
             /* J-type Instructions */
-            // jal x1, 8 -> x1 = PC+4(12)->actual:0x14(?????), jump to PC+8(16) -> working
+            // jal x1, 8 -> x1 = PC+4(12)->actual:0xc(?????), jump to PC+8(16) -> working
             mem[2] = JAL(5'd1, 21'd8);
             // addi x7, x0, 0x111 -> skipped
             mem[3] = ADDI(5'd7, 5'd0, 12'h111);
@@ -194,23 +194,19 @@ module instruction_mem (
 
 
             // lui x3, 0x0 -> x3 = 0x0
-            mem[5] = LUI(5'd3, 32'h00000_000);
+            mem[5] = LUI(5'd3, 20'h00000);
             // addi x3, x3, 50 -> x3 = 50 (for jalr test)
             mem[6] = ADDI(5'd3, 5'd3, 12'd50);
-            // jalr x2, x3, 16 -> x2 = PC+4 (32'd28)->actual:0x46(?????(pc_plus4)), jump to x3+16 (50+16=66)
+            // jalr x2, x3, 16 -> x2 = PC+4 (32'd28 + 4 = 0x20)-> checked), jump to x3+16 (50+16=66) -> checked
             mem[7] = JALR(5'd2, 5'd3, 12'd16);
             // addi x8, x0, 0x123 -> skipped
             mem[8] = ADDI(5'd8, 5'd0, 12'h123);
             // addi x8, x0, 0x456 -> skipped
             mem[9] = ADDI(5'd8, 5'd0, 12'h456);
 
-            // addi x8, x0, 0x777 -> jalr target?
+            // addi x8, x0, 0x777 -> jalr target (66 = 0x42 -> mem[16] (word aligned))
             mem[16] = ADDI(5'd8, 5'd0, 12'h777);
-            // addi x8, x0, 999 -> jalr target?
-            mem[17] = ADDI(5'd8, 5'd0, 12'h888);
         end
-        // TODO: PCPlus4 check (Should be PC_reg +4, not PC_next +4)
-
     end
 
 endmodule

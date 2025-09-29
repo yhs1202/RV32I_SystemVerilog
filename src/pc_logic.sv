@@ -11,7 +11,7 @@ module pc_logic (
 );
 
     logic [31:0] PC_next;
-    assign PC_Plus4 = PC_next + 32'd4;
+    assign PC_Plus4 = PC_reg + 32'd4;
 
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
