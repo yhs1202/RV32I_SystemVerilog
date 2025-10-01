@@ -18,82 +18,82 @@ module instruction_mem (
         /* R-type test instructions */
         if (0) begin
             /* R test scenario in asm code
-            ; Regfle is initialized w/ 0x32, 0x33, 0x34 ... from x0
+            ; Regfile initialize
+            li   x3,  0x35         ; 0 (x3 <= 0x35)
+            li   x4,  0x36         ; 4 (x4 <= 0x36)
+
             ; add, sub, xor, or, and
-            add   x5,  x3,  x4      ; 0 (x5 <= 0x35 + 0x36)
-            sub   x6,  x3,  x4      ; 4 (x6 <= 0x35 - 0x36) 
-            xor   x7,  x3,  x4      ; 8 (x7 <= 0x35 ^ 0x36) -> 0x3
-            or    x8,  x3,  x4      ; c (x8 <= 0x35 | 0x36)
-            and   x9,  x3,  x4      ; 10 (x9 <= 0x35 & 0x36)
+            add  x5,  x3,  x4      ; 8 (x5 <= 0x35 + 0x36)
+            sub  x6,  x3,  x4      ; c (x6 <= 0x35 - 0x36) 
+            xor  x7,  x3,  x4      ; 10 (x7 <= 0x35 ^ 0x36) -> 0x3
+            or   x8,  x3,  x4      ; 14 (x8 <= 0x35 | 0x36)
+            and  x9,  x3,  x4      ; 18 (x9 <= 0x35 & 0x36)
 
             ; shift
-            sll   x10, x3,  x7      ; 14 (x10 <= 0x35 << 3)
-            srl   x11, x3,  x7      ; 18 (x11 <= 0x35 >> 3)
-            sra   x12, x3,  x7      ; 1c (x12 <= 0x35 >>> 3)
+            sll  x10, x3,  x7      ; 1c (x10 <= 0x35 << 3)
+            srl  x11, x3,  x7      ; 20 (x11 <= 0x35 >> 3)
+            sra  x12, x3,  x7      ; 24 (x12 <= 0x35 >>> 3)
 
             ; slt
-            slt   x13, x3,  x6     ; 20 (x13 <= 0), (0x35 < 0xFFFF_FFFF)
-            sltu  x14, x3,  x6     ; 24 (x14 <= 1), (0x35 <u 0xFFFF_FFFF)
+            slt  x13, x3,  x6     ; 28 (x13 <= 0), (0x35 < 0xFFFF_FFFF)
+            sltu x14, x3,  x6     ; 2c (x14 <= 1), (0x35 <u 0xFFFF_FFFF)
             */
-            mem[0] = ADD(5'd5, 5'd3, 5'd4);
-            mem[1] = SUB(5'd6, 5'd3, 5'd4);
-            mem[2] = XOR(5'd7, 5'd3, 5'd4);
-            mem[3] = OR(5'd8, 5'd3, 5'd4);
-            mem[4] = AND(5'd9, 5'd3, 5'd4);
+            mem[0] = ADDI(5'd3, 5'd0, 12'h35);
+            mem[1] = ADDI(5'd4, 5'd0, 12'h36);
 
-            mem[5] = SLL(5'd10, 5'd3, 5'd7);
-            mem[6] = SRL(5'd11, 5'd3, 5'd7);
-            mem[7] = SRA(5'd12, 5'd3, 5'd7);
+            mem[2] = ADD(5'd5, 5'd3, 5'd4);
+            mem[3] = SUB(5'd6, 5'd3, 5'd4);
+            mem[4] = XOR(5'd7, 5'd3, 5'd4);
+            mem[5] = OR(5'd8, 5'd3, 5'd4);
+            mem[6] = AND(5'd9, 5'd3, 5'd4);
 
-            mem[8] = SLT(5'd13, 5'd3, 5'd6);
-            mem[9] = SLTU(5'd14, 5'd3, 5'd6);
+            mem[7] = SLL(5'd10, 5'd3, 5'd7);
+            mem[8] = SRL(5'd11, 5'd3, 5'd7);
+            mem[9] = SRA(5'd12, 5'd3, 5'd7);
+
+            mem[10] = SLT(5'd13, 5'd3, 5'd6);
+            mem[11] = SLTU(5'd14, 5'd3, 5'd6);
         end
 
         /* I-type arithmetic test instructions */
-        if (0) begin
+        if (1) begin
             /* I_arith test scenario in asm code
-                ; add, xor, or, and immediate
-                addi   x5,  x3,  4      ; 0 (x5 <= 35+4)
-                xori   x6,  x3,  5      ; 4 (x6 <= 35^5)
-                ori    x7,  x3,  6      ; 8 (x7 <= 35|6)
-                andi   x8,  x3,  7      ; c (x8 <= 35&7)
+            ; Regfile initialization
+            li   x3,  0x35          ; 0 (x3 <= 0x35)
+            li   x4,  0x831         ; 4 (x4 <= 0x831)
 
-                ; shift immediate
-                slli   x9,  x3,  1      ; 10 (x9 <= 35<<1)
-                srli   x10, x3,  2      ; 14 (x10 <= 35>>2)
-                srai   x11, x3,  3      ; 18 (x11 <= 35>>>3)
+            ; addi, xori, ori, andi
+            addi   x5,  x3,  4      ; 8 (x5 <= 0x35+4)
+            xori   x6,  x3,  5      ; c (x6 <= 0x35^5)
+            ori    x7,  x3,  6      ; 10 (x7 <= 0x35|6)
+            andi   x8,  x3,  7      ; 14 (x8 <= 0x35&7)
 
-                ; slt immediate
-                slti   x12, x3,  8      ; 1c (x12 <= 0), (35 < 8)
-                sltiu  x13, x3,  9      ; 20 (x13 <= 0), (35 <u 9)
+            ; shift immediate
+            slli   x9,  x3,  1      ; 18 (x9 <= 0x35<<1)
+            srli   x10, x3,  2      ; 1c (x10 <= 0x35>>2)
 
-                ; slt w/ negative immediate value
-                slti   x14, x3, 0xFF    ; 24 (x14 <= 1), (35 < 255)
-                slti   x15, x3, 0xFFF   ; 28 (x15 <= 0), (35 < -1)
-                sltiu  x16, x3, 0xFFF   ; 2c (x16 <= 1), (35 < 4095)
+            ; slt w/ negative immediate value
+            slti   x11, x3, 0xFFF   ; 20 (x11 <= 0), (0x35 < -1)
+            sltiu  x12, x3, 0xFFF   ; 24 (x12 <= 1), (0x35 < 4095)
 
-                ; sra w/ negative immediate value
-                addi   x4,  x3, 0x800   ; 30 (x4 <= 0xFFFF_F835), (53-2048 = -1995, 0xFFFF_F835)
-                srai   x17, x4,  3      ; 34 (x17 <= 0xFFFF_FF06), (0xFFFF_F835 >>> 3)
+            ; sra w/ negative immediate value
+            srai   x13, x4,  3      ; 28 (x15 <= 0xFFFF_FF06), (0xFFFF_F831 >>> 3)
             */
-            mem[0] = ADDI(5'd5, 5'd3, 12'd4);
-            mem[1] = XORI(5'd6, 5'd3, 12'd5);
-            mem[2] = ORI(5'd7, 5'd3, 12'd6);
-            mem[3] = ANDI(5'd8, 5'd3, 12'd7);
+            mem[0] = ADDI(5'd3, 5'd0, 12'h35);
+            mem[1] = ADDI(5'd4, 5'd0, 12'h831); // x4 = -1999
 
-            mem[4] = SLLI(5'd9, 5'd3, 5'd1);
-            mem[5] = SRLI(5'd10, 5'd3, 5'd2);
-            mem[6] = SRAI(5'd11, 5'd3, 5'd3);
+            mem[2] = ADDI(5'd5, 5'd3, 12'd4);
+            mem[3] = XORI(5'd6, 5'd3, 12'd5);
+            mem[4] = ORI(5'd7, 5'd3, 12'd6);
+            mem[5] = ANDI(5'd8, 5'd3, 12'd7);
 
-            mem[7] = SLTI(5'd12, 5'd3, 12'd8);
-            mem[8] = SLTIU(5'd13, 5'd3, 12'd9);
+            mem[6] = SLLI(5'd9, 5'd3, 5'd1);
+            mem[7] = SRLI(5'd10, 5'd3, 5'd2);
 
-            mem[9] = SLTI(5'd14, 5'd3, 12'h0FF);
-            mem[10] = SLTI(5'd15, 5'd3, 12'hFFF);
-            mem[11] = SLTIU(5'd16, 5'd3, 12'hFFF);
+            mem[8] = SLTI(5'd11, 5'd3, 12'hFFF);
+            mem[9] = SLTIU(5'd12, 5'd3, 12'hFFF);
 
-            mem[12] = ADDI(5'd4, 5'd3, 12'h800); // x4 = 50 - 2048 = -1998
-            mem[13] = SRAI(5'd17, 5'd4, 5'd3); // 0xFFFF_F835 >> 3 = 0xFFFF_FF06
+            mem[10] = SRAI(5'd13, 5'd4, 5'd3); // 0xFFFF_F831 >> 3 = 0xFFFF_FF06
         end
 
         /* S-type and I-type (load) test instructions */
@@ -126,7 +126,7 @@ module instruction_mem (
                 lhu x10, 8(x2)      ; 44 (x9 <= 0x8000, +32768)
             */
             mem[0] = LUI(5'd1, 20'h12345);
-            mem[1] = ADDI(5'd1, 5'd0, 12'h678);
+            mem[1] = ADDI(5'd1, 5'd1, 12'h678);
             mem[2] = SB(5'd1, 5'd0, 12'd4);
             mem[3] = SH(5'd1, 5'd0, 12'd8);
             mem[4] = SW(5'd1, 5'd0, 12'd12);
@@ -182,13 +182,13 @@ module instruction_mem (
 
 
                 ; bltu test
-                bltu  x7,  x5, 999       ; 48 (branch not taken (4294967295!<10))
+                blt   x5,  x7, 999       ; 48 (branch not taken (10!<-1))
                 bltu  x5,  x7, 8         ; 4c (branch taken (10<4294967295), pc <= pc+8 (0x54))
                 li    x14, x0, 9         ; 50 (skipped)
                 li    x14, x0, 10        ; 54 (branch target, x14 <= 10)
 
                 ; bgeu test
-                bgeu  x6,  x7, 999       ; 58 (branch not taken (15!>=4294967295))                
+                bge   x7,  x6, 999       ; 58 (branch not taken (-1!>=15))
                 bgeu  x7,  x6, 8         ; 5c (branch taken (4294967295>=15), pc <= pc+8 (0x64))
                 li    x15, x0, 11        ; 60 (skipped)
                 li    x15, x0, 12        ; 64 (branch target, x15 <= 12)
@@ -197,7 +197,7 @@ module instruction_mem (
             // initialize registers
             mem[0] = ADDI(5'd5, 5'd0, 12'd10);
             mem[1] = ADDI(5'd6, 5'd0, 12'd15);
-            mem[2] = LUI(5'd7, 20'hFFFFF);  // load -1
+            mem[2] = ADDI(5'd7, 5'd0, 12'hFFF);  // load -1
 
             // branch instructions start
             // beq test
@@ -224,13 +224,13 @@ module instruction_mem (
             mem[17] = ADDI(5'd13, 5'd0, 12'd8); // *target of branch*
             
             // bltu test
-            mem[18] = BLTU(5'd7, 5'd5, 13'd999);
+            mem[18] = BLT(5'd5, 5'd7, 13'd999);
             mem[19] = BLTU(5'd5, 5'd7, 13'd8); // -> branch taken
             mem[20] = ADDI(5'd14, 5'd0, 12'd9); // skipped
             mem[21] = ADDI(5'd14, 5'd0, 12'd10); // *target of branch*
 
             // bgeu test
-            mem[22] = BGEU(5'd6, 5'd7, 13'd999);
+            mem[22] = BGE(5'd7, 5'd6, 13'd999);
             mem[23] = BGEU(5'd7, 5'd6, 13'd8); // -> branch taken
             mem[24] = ADDI(5'd15, 5'd0, 12'd11); // skipped
             mem[25] = ADDI(5'd15, 5'd0, 12'd12); // *target of branch*

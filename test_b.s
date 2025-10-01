@@ -28,13 +28,13 @@ li   x13, x0,  8         ; 44 (branch target, x13 <= 8)
 
 
 ; bltu test
-bltu  x7,  x5, 999       ; 48 (branch not taken (4294967295!<10))
+blt   x5,  x7, 999       ; 48 (branch not taken (10!<-1))
 bltu  x5,  x7, 8         ; 4c (branch taken (10<4294967295), pc <= pc+8 (0x54))
 li    x14, x0, 9         ; 50 (skipped)
 li    x14, x0, 10        ; 54 (branch target, x14 <= 10)
 
 ; bgeu test
-bgeu  x6,  x7, 999       ; 58 (branch not taken (15!>=4294967295))                
+bge   x7,  x6, 999       ; 58 (branch not taken (-1!>=15))
 bgeu  x7,  x6, 8         ; 5c (branch taken (4294967295>=15), pc <= pc+8 (0x64))
 li    x15, x0, 11        ; 60 (skipped)
 li    x15, x0, 12        ; 64 (branch target, x15 <= 12)

@@ -7,7 +7,7 @@
     add rd, rs1, rs2
         (5) (5)  (5)
     func7, rs2, rs1, func3, rd, opcode
-    (7)   (5)  (5)   (3)   (5)  (7)
+     (7)   (5)  (5)   (3)  (5)   (7)
     */
     function automatic [31:0] ADD (input [4:0] rd, input [4:0] rs1, input [4:0] rs2);
         return {7'b0000000, rs2, rs1, 3'b000, rd, `OP_R};
@@ -168,7 +168,7 @@
     endfunction
 
     /* ---------- U-type ----------
-    lui rd, imm
+    auipc rd, imm
         (5) (20)
     imm, rd, opcode
     (20) (5)  (7)
@@ -186,6 +186,11 @@
        (5)  (20)
     imm[20], imm[10:1], imm[11], imm[19:12], rd, opcode
       (1)      (10)       (1)       (8)      (5)  (7)
+
+    jalr rd, rs1, imm
+        (5)  (5)  (12)
+    imm, rs1, func3, rd, opcode
+    (12) (5)   (3)   (5)  (7)
     */
     function automatic [31:0] JAL (input [4:0] rd, input [20:0] imm);
         return {imm[20], imm[10:1], imm[11], imm[19:12], rd, `OP_J_JAL};
