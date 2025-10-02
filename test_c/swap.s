@@ -1,5 +1,6 @@
 /* 251002_1541 Checked */
-_start:	li		sp, 200
+/* 251002_1614 fix ret bug */
+_start:	li	sp, 200
 
 main:
         addi    sp,sp,-64
@@ -76,7 +77,7 @@ main:
         lw      ra,60(sp)
         lw      s0,56(sp)
         addi    sp,sp,64
-        jr      ra
+        j       _end            ; fixed line
 swap:
         addi    sp,sp,-48
         sw      ra,44(sp)
@@ -99,3 +100,5 @@ swap:
         lw      s0,40(sp)
         addi    sp,sp,48
         jr      ra
+_end:
+        j       _end
