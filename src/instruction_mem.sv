@@ -1,17 +1,18 @@
 `timescale 1ns/1ps
 `include "asm2hex_macro.svh"
+parameter MEM_SIZE = 256; // 256 words of instruction memory
 
 module instruction_mem (
     input logic [31:0] addr,
     output logic [31:0] instruction_code
 );
 
-    logic [31:0] mem [0:63];    // 64 words of instruction memory (256 bytes)
+    logic [31:0] mem [0:MEM_SIZE-1];
     assign instruction_code = mem[addr[31:2]]; // word aligned
 
     initial begin
         // initialize instruction memory
-        for (int i = 0; i < 64; i = i + 1) 
+        for (int i = 0; i < MEM_SIZE; i = i + 1) 
             mem[i] = 32'b0;
         #10;
 
@@ -56,7 +57,7 @@ module instruction_mem (
         end
 
         /* I-type arithmetic test instructions */
-        if (1) begin
+        if (0) begin
             /* I_arith test scenario in asm code
             ; Regfile initialization
             li   x3,  0x35          ; 0 (x3 <= 0x35)
@@ -269,8 +270,8 @@ module instruction_mem (
         end
 
         /* read hex code with memory dump */
-        if (0) begin
-            $readmemh("./0929.mem", mem);
+        if (1) begin
+            $readmemh("./swap.mem", mem);
         end
     end
 

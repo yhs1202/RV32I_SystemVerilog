@@ -1,5 +1,6 @@
 `timescale 1ns/1ps
 `include "define.svh"
+parameter MEM_BYTE_SIZE = 256;
 
 // Temporary implementation of data memory
 // TODO: Replace with dual-port RAM 
@@ -14,10 +15,10 @@ module data_memory (
     output logic [31:0] r_data
 );
 
-    (* ram_style = "block" *) logic [7:0] mem [0:511];
+    (* ram_style = "block" *) logic [7:0] mem [0:MEM_BYTE_SIZE - 1];
 
     initial begin
-        for (int i = 0; i < 512; i++) begin
+        for (int i = 0; i < MEM_BYTE_SIZE; i++) begin
             // mem[i] = i + 8'd20; // Initialize 
             mem[i] = 8'b0;
         end
