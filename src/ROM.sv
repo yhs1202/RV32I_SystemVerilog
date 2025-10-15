@@ -2,7 +2,7 @@
 `include "asm2hex_macro.svh"
 parameter MEM_SIZE = 256; // 256 words of instruction memory
 
-module instruction_mem (
+module ROM (
     input logic [31:0] addr,
     output logic [31:0] instruction_code
 );
