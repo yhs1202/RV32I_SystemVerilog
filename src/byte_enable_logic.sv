@@ -36,32 +36,25 @@ module byte_enable_logic (
     wire [15:0] halfword_mask = r_data >> (Addr_Last2[1] * 16); // right shift to align halfword to LSB
 
     always_comb begin : Data_masking_with_BE
-
-        // BE_w_data Masking will be processed in RAM_with_BE module
-        BE_w_data = w_data;
-
         // BE_r_data Masking for memory read
         case(byte_enable)
             4'b1111: // word
                 BE_r_data = r_data;
-                
             4'b0011, 4'b1100: // halfword
                 BE_r_data = is_unsigned ? {16'b0, halfword_mask} :  // zero-extend
-                                    {16{halfword_mask[15]}, halfword_mask}; // sign-extend
-
+                                          {{16{halfword_mask[15]}}, halfword_mask}; // sign-extend
             4'b0001, 4'b0010, 4'b0100, 4'b1000: // byte
                 BE_r_data = is_unsigned ? {24'b0, byte_mask} :      // zero-extend
-                                    {24{byte_mask[7]}, byte_mask};  // sign-extend
+                                          {{24{byte_mask[7]}}, byte_mask};  // sign-extend
             default:
                 BE_r_data = 32'b0;
         endcase
-        /*
+        
         // Masking BE_w_data for memory write
         BE_w_data = 32'b0;
         for (int i = 0; i < 4; i++)
             if (byte_enable[i])
                 BE_w_data[i*8 +: 8] = w_data[i*8 +: 8];
-        */
     end
 endmodule
 
