@@ -1,9 +1,12 @@
+// This module implements a simple data memory for a RISC-V processor.
+// It supports byte, halfword, and word read/write operations with appropriate sign or zero extension.
+// But it is not inferred as block RAM on FPGA and instead it uses distributed memory (LUTs).
+// So I substituted it with another RAM module that infers block RAM in FPGA. (See RAM_with_BE.sv, byte_enable_logic.sv)
+
 `timescale 1ns/1ps
 `include "define.svh"
 parameter MEM_BYTE_SIZE = 256;
 
-// Temporary implementation of data memory
-// TODO: Replace with dual-port RAM 
 module data_memory (
     input logic clk,
     input logic MemRead,
@@ -19,7 +22,6 @@ module data_memory (
 
     initial begin
         for (int i = 0; i < MEM_BYTE_SIZE; i++) begin
-            // mem[i] = i + 8'd20; // Initialize 
             mem[i] = 8'b0;
         end
     end
