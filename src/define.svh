@@ -1,17 +1,19 @@
 `timescale 1ns/1ps
 
 /* Define ALU operation codes */
-`define ALU_ADD 5'b0_0000
-`define ALU_SUB 5'b0_0001
-`define ALU_XOR 5'b0_0010
-`define ALU_OR  5'b0_0011
-`define ALU_AND 5'b0_0100
-`define ALU_SLL 5'b0_0101
-`define ALU_SRL 5'b0_0110
-`define ALU_SRA 5'b0_0111
-`define ALU_SLT 5'b0_1000
-`define ALU_SLTU 5'b0_1001
-`define ALU_NOP 5'b1_1111  // No operation
+// reorganized in 25.10.16
+// ALUControl -> instr[30], instr[14:12] (func3)
+`define ALU_ADD     4'b0_000
+`define ALU_SUB     4'b1_000
+`define ALU_SLL     4'b0_001
+`define ALU_SRL     4'b0_101
+`define ALU_SRA     4'b1_101
+`define ALU_SLT     4'b0_010
+`define ALU_SLTU    4'b0_011
+`define ALU_XOR     4'b0_100
+`define ALU_OR      4'b0_110
+`define ALU_AND     4'b0_111
+`define ALU_NOP     4'b1_111  // No operation
 
 /* Define instruction opcodes */
 `define OP_R		7'b011_0011     // R-type
@@ -26,17 +28,17 @@
 
 
 /* Define funct3 codes for memory */
-`define F3_BYTE  3'b000
-`define F3_HALF  3'b001
-`define F3_WORD  3'b010
-`define F3_UBYTE 3'b100
-`define F3_UHALF 3'b101
+`define F3_BYTE     3'b000
+`define F3_HALF     3'b001
+`define F3_WORD     3'b010
+`define F3_UBYTE    3'b100
+`define F3_UHALF    3'b101
 
 
 /* Define funct3 codes for branch */
-`define F3_BEQ  3'b000
-`define F3_BNE  3'b001
-`define F3_BLT  3'b100
-`define F3_BGE  3'b101
-`define F3_BLTU 3'b110
-`define F3_BGEU 3'b111
+`define F3_BEQ      3'b000
+`define F3_BNE      3'b001
+`define F3_BLT      3'b100
+`define F3_BGE      3'b101
+`define F3_BLTU     3'b110
+`define F3_BGEU     3'b111

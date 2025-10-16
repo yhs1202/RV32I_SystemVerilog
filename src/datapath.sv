@@ -12,7 +12,7 @@ module datapath (
     input logic [31:0] RAM_r_data,
     input logic Branch,            // 0-> no branch, 1-> branch
     input logic [1:0] PCSrc,       // 0-> PC+4, 1-> branch target, 2-> JAL target, 3-> JALR target
-    input logic [4:0] ALUControl,
+    input logic [3:0] ALUControl,
     input logic [1:0] MemtoReg,    // 0-> ALU result, 1-> memory data, 2-> PC+4 (for JAL), 3-> imm (for LUI)
 
 
@@ -63,7 +63,7 @@ module datapath (
         .Z(Z),
         .C(C),
         .V(V),
-        .result(ALU_result)
+        .ALU_result(ALU_result)
     );
 
     extend U_EXTEND (

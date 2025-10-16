@@ -14,58 +14,32 @@ module control_unit (
     output logic MemWrite,
     output logic Branch,            // 0-> no branch, 1-> branch
     output logic [1:0] PCSrc,       // 0-> PC+4, 1-> branch target, 2-> JAL target, 3-> JALR target
-    output logic [4:0] ALUControl
+    output logic [3:0] ALUControl
 
 );
 
-    wire [6:0] func7 = instruction_code[31:25];
+    wire instr30 = instruction_code[30];
     wire [2:0] func3 = instruction_code[14:12];
     wire [6:0] opcode = instruction_code[6:0];
 
-    // Decode instruction
+    wire [4:0] operator = {instr30, func3}; // {instr[30], instr[14:12]}
+    wire flag = (func3 == 3'b101) ? instr30 : 1'b0; // for SRLI, SRAI
+
+    /* Decode instruction */
+    // ALUControl
     always_comb begin : ALU_decoder
         case (opcode)
-        `OP_R: begin // R-type
-            case ({func7, func3})
-                10'b0000000_000: ALUControl = `ALU_ADD; // ADD
-                10'b0100000_000: ALUControl = `ALU_SUB; // SUB
-                10'b0000000_100: ALUControl = `ALU_XOR; // XOR
-                10'b0000000_110: ALUControl = `ALU_OR;  // OR
-                10'b0000000_111: ALUControl = `ALU_AND; // AND
-                10'b0000000_001: ALUControl = `ALU_SLL; // SLL
-                10'b0000000_101: ALUControl = `ALU_SRL; // SRL
-                10'b0100000_101: ALUControl = `ALU_SRA; // SRA
-                10'b0000000_010: ALUControl = `ALU_SLT; // SLT
-                10'b0000000_011: ALUControl = `ALU_SLTU; // SLTU
-                default:         ALUControl = `ALU_NOP; // Default to NOP
-            endcase
-        end
-
-        `OP_I_ARITH: begin // I-type arithmetic
-            casez ({func7, func3})  // casez: x, z -> don't care
-                10'b???????_000: ALUControl = `ALU_ADD; // ADDI
-                10'b???????_100: ALUControl = `ALU_XOR; // XORI
-                10'b???????_110: ALUControl = `ALU_OR;  // ORI
-                10'b???????_111: ALUControl = `ALU_AND; // ANDI
-                10'b0000000_001: ALUControl = `ALU_SLL; // SLLI
-                10'b0?00000_101: ALUControl = func7[5] ? `ALU_SRA : `ALU_SRL; // SRLI, SRAI
-                10'b???????_010: ALUControl = `ALU_SLT; // SLTI
-                10'b???????_011: ALUControl = `ALU_SLTU; // SLTIU
-                default:         ALUControl = `ALU_NOP; // Default to NOP
-            endcase
-        end
-
-        `OP_I_LOAD,
-        `OP_S,
-        `OP_U_LUI,
-        `OP_U_AUIPC,
-        `OP_I_JALR: ALUControl = `ALU_ADD; // Use ADD for address calculation or immediate loading // I-type Load, S-type, U-type LUI/AUIPC
-
-        `OP_B: ALUControl = `ALU_SUB; // Use SUB for branch comparisons
-
-        `OP_J_JAL: ALUControl = `ALU_NOP; // JAL does not require ALU operation (PC is handled in datapath)
-        default: ALUControl = `ALU_NOP;
-
+        `OP_R: // R-type
+            ALUControl = operator;
+        `OP_I_ARITH: // I-type arithmetic
+            ALUControl = {flag, operator[2:0]};
+        `OP_I_LOAD, `OP_S, `OP_U_AUIPC, `OP_I_JALR:
+            ALUControl = `ALU_ADD; // Use ADD for address calculation or immediate loading // I-type Load, S-type, U-type LUI/AUIPC
+        `OP_B:
+            ALUControl = `ALU_SUB; // Use SUB for branch comparisons
+        default: 
+        // `OP_U_LUI, `OP_J_JAL: 
+            ALUControl = `ALU_NOP; // JAL does not require ALU operation (PC is handled in datapath)
         endcase
     end
 

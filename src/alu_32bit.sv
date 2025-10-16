@@ -2,8 +2,7 @@
 `include "define.svh"
 
 module alu_32bit (
-    // input logic [2:0] ALUOp,
-    input logic [4:0] ALUControl,
+    input logic [3:0] ALUControl,
     input logic signed [31:0] a,
     input logic signed [31:0] b,
 
@@ -15,36 +14,36 @@ module alu_32bit (
     V -> Overflow flag
     
     when adding or subtracting two numbers which have the same sign, 
-    the result has the opposite sign if overflow occurs.
+    the ALU_result has the opposite sign if overflow occurs.
     ex) 0111 + 0100 = 1011 (overflow)
         1000 - 0100 = 1100 (overflow)
     */
-    output logic [31:0] result
+    output logic [31:0] ALU_result
 );
 
-    assign N = result[31];
-    assign Z = (result == 32'b0);
+    assign N = ALU_result[31];
+    assign Z = (ALU_result == 32'b0);
 
     always_comb begin : ALU_operations
         C = 1'b0; V = 1'b0;
         case (ALUControl)
             `ALU_ADD: begin
-                {C, result} = a + b;
-                V = (~(a[31]^b[31]) & (a[31]^result[31]));
+                {C, ALU_result} = a + b;
+                V = (~(a[31]^b[31]) & (a[31]^ALU_result[31]));
             end
             `ALU_SUB: begin
-                {C, result} = a - b;    // C = ~borrow
-                V = ((a[31]^b[31]) & (a[31]^result[31]));
+                {C, ALU_result} = a - b;    // C = ~borrow
+                V = ((a[31]^b[31]) & (a[31]^ALU_result[31]));
             end
-            `ALU_XOR: result = a ^ b;
-            `ALU_OR: result = a | b;
-            `ALU_AND: result = a & b;
-            `ALU_SLL: result = a << b[4:0];
-            `ALU_SRL: result = a >> b[4:0];
-            `ALU_SRA: result = $signed(a) >>> b[4:0];
-            `ALU_SLT: result = {31'b0, $signed(a) < $signed(b)};
-            `ALU_SLTU: result = {31'b0, $unsigned(a) < $unsigned(b)};
-            default: result = 32'b0;    // NO OPERATION
+            `ALU_XOR: ALU_result = a ^ b;
+            `ALU_OR: ALU_result = a | b;
+            `ALU_AND: ALU_result = a & b;
+            `ALU_SLL: ALU_result = a << b[4:0];
+            `ALU_SRL: ALU_result = a >> b[4:0];
+            `ALU_SRA: ALU_result = $signed(a) >>> b[4:0];
+            `ALU_SLT: ALU_result = {31'b0, $signed(a) < $signed(b)};
+            `ALU_SLTU: ALU_result = {31'b0, $unsigned(a) < $unsigned(b)};
+            default: ALU_result = 32'b0;    // NO OPERATION
         endcase
     end
 endmodule
