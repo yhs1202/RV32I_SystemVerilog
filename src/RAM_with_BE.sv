@@ -23,19 +23,21 @@ module RAM_with_BE (
         end
     end
 
-    // Write operation (Store)
+    // Sync Write operation (Store)
     always_ff @(posedge clk) begin : MemoryAccess
         if (MemWrite) begin
             for (int i = 0; i < 4; i++) begin
                 if (byte_enable[i])
-                    mem[addr][i*8 +: 8] <= w_data[i*8 +: 8];
+                    mem[addr[31:2]][i*8 +: 8] <= w_data[i*8 +: 8];
             end
         end
     end
+
+    // Async Read operation (Load)
     always_comb begin
         r_data = 32'b0; // Default value
         if (MemRead) begin
-            r_data = mem[addr];
+            r_data = mem[addr[31:2]];
         end
     end
 endmodule
