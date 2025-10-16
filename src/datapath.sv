@@ -31,16 +31,14 @@ module datapath (
     logic [31:0] PC_Plus4;
     logic [31:0] imm_ext;
 
-    logic [31:0] BE_in_w_data; // to BE_logic (store)
-    logic [31:0] BE_in_r_data; // to BE_logic (load)
+    logic [31:0] BE_out_r_data; // Write-back data for load
 
 
-    assign BE_in_w_data = r_data_1;
     assign alu_a = (ALUSrc_A) ? PC : r_data_0;      // for auipc
     assign alu_b = (ALUSrc_B) ? imm_ext : r_data_1; // for immediate instructions
 
     assign REG_w_data = (MemtoReg == 2'b00) ? ALU_result :          // for R-type, I-type
-                        (MemtoReg == 2'b01) ? BE_in_r_data :        // for load
+                        (MemtoReg == 2'b01) ? BE_out_r_data :        // for load
                         (MemtoReg == 2'b10) ? PC_Plus4 : imm_ext;   // for JAL, for LUI
 
 
@@ -116,11 +114,11 @@ module datapath (
     byte_enable_logic U_BYTE_ENABLE_LOGIC (
         .func3(instruction_code[14:12]),
         .addr(ALU_result),
-        .w_data(BE_in_w_data),
-        .r_data(BE_in_r_data),
+        .w_data(r_data_1),   // from register file (rs2)
+        .r_data(RAM_r_data), // from RAM
 
-        .BE_w_data (RAM_w_data),    // to RAM with byte_enable (store)
-        .BE_r_data (RAM_r_data),    // to RAM with byte_enable (load)
+        .BE_w_data (RAM_w_data),    // from rs2 to RAM with byte_enable (store)
+        .BE_r_data (BE_out_r_data), // from RAM to MemtoReg_Mux with byte_enable (load)
         .byte_enable(byte_enable)
     );
 
